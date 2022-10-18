@@ -2,6 +2,8 @@ package cryptography.asymmetric.GUI;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -9,9 +11,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -21,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -74,41 +83,52 @@ public class MainForm extends JFrame {
   private JButton chooseOutputFileButton;
   private JLabel outputFileSizeTipLabel;
   private JLabel outputCUrrentFilePathLabel;
+  private JTextField currentFilePathField;
+  private JTextField outputCurrentFilePathField;
+  private JPanel authorPanel;
+  private JLabel githubLink;
+  private JPanel linksPanel;
+  private JLabel githubLabel;
   private JTextArea currentInputFileArea;
   private JLabel fileSizeLabel;
   private JLabel currentFileLabel;
 
-  private JFileChooser inputFileChooser = new JFileChooser();
+  private final JFileChooser inputFileChooser = new JFileChooser();
 
-  private JFileChooser outputFileChooser = new JFileChooser();
+  private final JFileChooser outputFileChooser = new JFileChooser();
 
 
   public MainForm() {
     super();
-    setSize(new Dimension(700, 500));
+    setSize(new Dimension(650, 500));
     setVisible(true);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     setContentPane(mainPanel);
     scrollPanel.setPreferredSize(new Dimension(100, this.getHeight()));
     progNameLabel.setPreferredSize(new Dimension(scrollPanel.getWidth(), 40));
-    authorLabel.setPreferredSize(new Dimension(scrollPanel.getWidth(), 40));
+    authorPanel.setPreferredSize(new Dimension(scrollPanel.getWidth(), 40));
     algNamePanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 40));
-    logsPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 60));
+    logsPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 55));
     inputTypePanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 40));
     outputResultPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 80));
     inputDataPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 100));
-    resultLabel.setPreferredSize(new Dimension(200, outputResultPanel.getHeight()));
-    calculateButtonPanel.setPreferredSize(new Dimension(200, inputDataPanel.getHeight()));
+    resultLabel.setPreferredSize(new Dimension(150, outputResultPanel.getHeight()));
+    calculateButtonPanel.setPreferredSize(new Dimension(150, inputDataPanel.getHeight()));
     Dimension scrollDim = new Dimension(10, 0);
     NoArrowScrollBarUI scrollArrow = new NoArrowScrollBarUI();
     scrollOutputPanel.getVerticalScrollBar().setPreferredSize(scrollDim);
     scrollInputPanel.getVerticalScrollBar().setPreferredSize(scrollDim);
     scrollPanel.getVerticalScrollBar().setPreferredSize(scrollDim);
-    scrollOutputPanel.getVerticalScrollBar().setUI(scrollArrow);
-    scrollInputPanel.getVerticalScrollBar().setUI(scrollArrow);
-    scrollPanel.getVerticalScrollBar().setUI(scrollArrow);
+    githubLabel.setForeground(Color.BLUE.darker());
+    githubLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    githubLabel.addMouseListener(new HyperLinkListener());
+    //scrollOutputPanel.getVerticalScrollBar().setUI(scrollArrow);
+    //scrollInputPanel.getVerticalScrollBar().setUI(scrollArrow);
+    //scrollPanel.getVerticalScrollBar().setUI(scrollArrow);
     logsTextArea.setBackground(dataPanel.getBackground());
     list1.setBackground(dataPanel.getBackground());
+    currentFilePathField.setBackground(dataPanel.getBackground());
+    outputCurrentFilePathField.setBackground(dataPanel.getBackground());
     logsTextArea.setWrapStyleWord(true);
     outputArea.setWrapStyleWord(true);
     inputArea.setWrapStyleWord(true);
@@ -128,16 +148,19 @@ public class MainForm extends JFrame {
     chooseInputFileButton.addActionListener(cfl);
     chooseOutputFileButton.addActionListener(cfl);
     logsTextArea.setText("1.Choose input/output format -> enter data according to chosen format\n2.Choose encrypt or decrypt -> set parameters\n3.Press «Calculate» button");
+    //logsTextArea.setText("QWEWQ");
     scrollPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 2, 0, Color.BLACK));
     menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK));
-    algorithmsPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.BLACK));
+    algorithmsPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     outputResultPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     paramsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    logsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    logsPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     inputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    currentFilePathField.setBorder(BorderFactory.createEmptyBorder());
+    outputCurrentFilePathField.setBorder(BorderFactory.createEmptyBorder());
     outputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     inputDataPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
-    calculateButtonPanel.setBorder(BorderFactory.createEmptyBorder(15, 35, 15, 35));
+    calculateButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     algNameLabel.setText(list1.getSelectedValue());
     //inputFileChooser.showOpenDialog(this);
     list1.addListSelectionListener(new MenuSelectionListener());
@@ -159,15 +182,15 @@ public class MainForm extends JFrame {
       if (e.getActionCommand().equals("InputFile")) {
         choice = inputFileChooser.showOpenDialog(mainPanel);
         if (choice == JFileChooser.APPROVE_OPTION) {
-          currentFilePathLabel.setText(inputFileChooser.getSelectedFile().toString());
-          currentFilePathLabel.setToolTipText(currentFilePathLabel.getText());
+          currentFilePathField.setText(inputFileChooser.getSelectedFile().toString());
+          currentFilePathField.setToolTipText(currentFilePathField.getText());
           fileSizeTipLabel.setText("Size (bytes): " + 512);
         }
       } else {
        choice = outputFileChooser.showOpenDialog(mainPanel);
         if (choice == JFileChooser.APPROVE_OPTION) {
-          outputCUrrentFilePathLabel.setText(outputFileChooser.getSelectedFile().toString());
-          outputCUrrentFilePathLabel.setToolTipText(outputCUrrentFilePathLabel.getText());
+          outputCurrentFilePathField.setText(outputFileChooser.getSelectedFile().toString());
+          outputCurrentFilePathField.setToolTipText(outputCurrentFilePathField.getText());
           outputFileSizeTipLabel.setText("Size (bytes): " + 512);
         }
       }
@@ -204,6 +227,37 @@ public class MainForm extends JFrame {
     @Override
     protected JButton createIncreaseButton(int orientation) {
       return createZeroButton();
+    }
+  }
+
+  private class HyperLinkListener implements MouseListener {
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      try {
+        Desktop.getDesktop().browse(new URI("https://github.com/syndersage/AsymCrypt"));
+      } catch (URISyntaxException | IOException ignored) {
+      }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      githubLabel.setText("<html><a href=''>GitHub</a></html>");
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+      githubLabel.setText("GitHub");
     }
   }
 
