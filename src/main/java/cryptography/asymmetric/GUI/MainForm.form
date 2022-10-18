@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="cryptography.asymmetric.GUI.MainForm">
+  <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="515" height="400"/>
+    </constraints>
+    <properties>
+      <font size="14"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="771cd" binding="menuPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="West"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="22e3" class="javax.swing.JLabel" binding="progNameLabel">
+            <constraints border-constraint="North"/>
+            <properties>
+              <font size="16"/>
+              <text value="ProgName"/>
+            </properties>
+          </component>
+          <component id="83aa" class="javax.swing.JLabel" binding="authorLabel">
+            <constraints border-constraint="South"/>
+            <properties>
+              <font size="12"/>
+              <text value="Author"/>
+            </properties>
+          </component>
+          <scrollpane id="38d46" binding="scrollPanel">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <verticalScrollBarPolicy value="20"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="60d2c" class="javax.swing.JList" binding="list1" default-binding="true">
+                <constraints/>
+                <properties>
+                  <font size="14"/>
+                  <model>
+                    <item value="RSA"/>
+                    <item value="MD5"/>
+                    <item value="SHA2"/>
+                    <item value="CHACHA20"/>
+                  </model>
+                  <selectedIndex value="0"/>
+                  <selectionMode value="0"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+      <grid id="c0992" binding="dataPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="6485e" binding="algNamePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="North"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="11501" class="javax.swing.JLabel" binding="algNameLabel">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <font size="16"/>
+                  <horizontalAlignment value="0"/>
+                  <horizontalTextPosition value="0"/>
+                  <text value="Label"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="297a3" binding="logsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="South"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="fefae" class="javax.swing.JTextArea" binding="logsTextArea" default-binding="true">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <editable value="false"/>
+                  <font size="12"/>
+                  <text value="logs"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="8dc67" binding="algorithmsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="2a56a" binding="inputTypePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints border-constraint="North"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="d6c53" class="javax.swing.JRadioButton" binding="plainTextRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font size="14"/>
+                      <selected value="true"/>
+                      <text value="Plain text"/>
+                    </properties>
+                  </component>
+                  <component id="6cc4d" class="javax.swing.JRadioButton" binding="fileRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font size="14"/>
+                      <text value="File"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="d2c3e" binding="outputResultPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints border-constraint="South"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="59645" class="javax.swing.JLabel" binding="resultLabel">
+                    <constraints border-constraint="East"/>
+                    <properties>
+                      <font size="16"/>
+                      <horizontalAlignment value="0"/>
+                      <text value="Result"/>
+                    </properties>
+                  </component>
+                  <component id="45d61" class="javax.swing.JLabel" binding="outputTipLabel">
+                    <constraints border-constraint="North"/>
+                    <properties>
+                      <font size="14"/>
+                      <text value="Output:"/>
+                    </properties>
+                  </component>
+                  <grid id="d6933" binding="changeOutputTypePanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="Center"/>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <scrollpane id="7abb6" binding="scrollOutputPanel">
+                        <constraints>
+                          <card name="Card1"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="75c08" class="javax.swing.JTextArea" binding="outputArea">
+                            <constraints/>
+                            <properties>
+                              <alignmentX value="0.5"/>
+                              <editable value="false"/>
+                              <font size="14"/>
+                              <text value="Output data will be here!"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <grid id="3c209" binding="outputFilePanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <card name="Card2"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="26114" class="javax.swing.JButton" binding="chooseOutputFileButton">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <font size="14"/>
+                              <text value="Choose File"/>
+                            </properties>
+                          </component>
+                          <hspacer id="8790a">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                          </hspacer>
+                          <component id="269cb" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <horizontalAlignment value="0"/>
+                              <text value="Chosen file path:"/>
+                            </properties>
+                          </component>
+                          <component id="81e3d" class="javax.swing.JLabel" binding="outputFileSizeTipLabel">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <font size="14"/>
+                              <text value=""/>
+                            </properties>
+                          </component>
+                          <component id="4f22c" class="javax.swing.JLabel" binding="outputCUrrentFilePathLabel">
+                            <constraints>
+                              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <font size="9"/>
+                              <text value=""/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+              <grid id="120a1" binding="inputDataAndParamsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="950fb" binding="inputDataPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="North"/>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="46950" class="javax.swing.JLabel" binding="inputTipLabel">
+                        <constraints border-constraint="North"/>
+                        <properties>
+                          <font size="14"/>
+                          <text value="Input:"/>
+                        </properties>
+                      </component>
+                      <grid id="4a12a" binding="calculateButtonPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints border-constraint="East"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="6ac34" class="javax.swing.JButton" binding="calculateButton" default-binding="true">
+                            <constraints border-constraint="Center"/>
+                            <properties>
+                              <font size="14"/>
+                              <text value="Calculate"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="b9968" binding="encryptDecryptPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="South"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="f326f" class="javax.swing.JRadioButton" binding="encryptRadioButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <font size="14"/>
+                              <selected value="true"/>
+                              <text value="Encrypt"/>
+                            </properties>
+                          </component>
+                          <component id="98607" class="javax.swing.JRadioButton" binding="decryptRadioButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <font size="14"/>
+                              <text value="Decrypt"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="cb8ce" binding="changeInputTypePanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <scrollpane id="cfdcd" binding="scrollInputPanel">
+                            <constraints>
+                              <card name="Card1"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="f7107" class="javax.swing.JTextArea" binding="inputArea">
+                                <constraints/>
+                                <properties>
+                                  <font size="14"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </scrollpane>
+                          <grid id="43c6e" binding="inputFilePanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <card name="Card2"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="b2975" class="javax.swing.JButton" binding="chooseInputFileButton">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <actionCommand value="InputFile"/>
+                                  <font size="14"/>
+                                  <text value="Choose File"/>
+                                </properties>
+                              </component>
+                              <hspacer id="78fba">
+                                <constraints>
+                                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                              </hspacer>
+                              <component id="1be06" class="javax.swing.JLabel" binding="fileSizeTipLabel">
+                                <constraints>
+                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14"/>
+                                  <text value=""/>
+                                </properties>
+                              </component>
+                              <component id="b85cd" class="javax.swing.JLabel" binding="currentFileTipLabel">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Chosen file path: "/>
+                                </properties>
+                              </component>
+                              <component id="5a8bc" class="javax.swing.JLabel" binding="currentFilePathLabel">
+                                <constraints>
+                                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <font size="9"/>
+                                  <text value=""/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                  <grid id="c4389" binding="paramsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="Center"/>
+                    <properties>
+                      <inheritsPopupMenu value="false"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="cd164" class="javax.swing.JLabel" binding="paramsTipLabel">
+                        <constraints border-constraint="North"/>
+                        <properties>
+                          <font size="14"/>
+                          <text value="Parameters:"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="inputTypeGroup">
+      <member id="d6c53"/>
+      <member id="6cc4d"/>
+    </group>
+    <group name="buttonGroup1">
+      <member id="98607"/>
+      <member id="f326f"/>
+    </group>
+  </buttonGroups>
+</form>
