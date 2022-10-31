@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="cryptography.asymmetric.GUI.MainForm">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="515" height="400"/>
+      <xy x="20" y="20" width="746" height="400"/>
     </constraints>
     <properties>
       <font size="14"/>
@@ -28,7 +28,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="60d2c" class="javax.swing.JList" binding="list1" default-binding="true">
+              <component id="60d2c" class="javax.swing.JList" binding="algorithmsList">
                 <constraints/>
                 <properties>
                   <font size="14"/>
@@ -37,6 +37,7 @@
                     <item value="MD5"/>
                     <item value="SHA2"/>
                     <item value="CHACHA20"/>
+                    <item value="DH"/>
                   </model>
                   <selectedIndex value="0"/>
                   <selectionMode value="0"/>
@@ -415,11 +416,147 @@
                           <text value="Parameters:"/>
                         </properties>
                       </component>
-                      <grid id="957b3" layout-manager="CardLayout" hgap="0" vgap="0">
+                      <grid id="957b3" binding="paramsAlgorithmsPanel" layout-manager="CardLayout" hgap="0" vgap="0">
                         <constraints border-constraint="Center"/>
                         <properties/>
                         <border type="none"/>
-                        <children/>
+                        <children>
+                          <grid id="32ac9" binding="rsaPanel" layout-manager="GridLayoutManager" row-count="3" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <card name="RSA"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="e9edc" class="javax.swing.JRadioButton" binding="rsaPKCS1OAEPPaddingButton">
+                                <constraints>
+                                  <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="PKCS#1-OAEP"/>
+                                </properties>
+                              </component>
+                              <component id="d0264" class="javax.swing.JRadioButton" binding="rsaNonePaddingButton">
+                                <constraints>
+                                  <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="None"/>
+                                </properties>
+                              </component>
+                              <component id="4957e" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Padding:"/>
+                                </properties>
+                              </component>
+                              <component id="dbfa1" class="javax.swing.JRadioButton" binding="autoKeyGenButton">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Auto"/>
+                                </properties>
+                              </component>
+                              <component id="3454d" class="javax.swing.JRadioButton" binding="manualKeyGenButton">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Manually"/>
+                                </properties>
+                              </component>
+                              <component id="6cdf2" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Key generation"/>
+                                </properties>
+                              </component>
+                              <component id="274c2" class="javax.swing.JTextField" binding="rsaModulusField">
+                                <constraints>
+                                  <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="412d5" class="javax.swing.JLabel" binding="rsaModulusLabel">
+                                <constraints>
+                                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Modulus"/>
+                                </properties>
+                              </component>
+                              <component id="9317b" class="javax.swing.JLabel" binding="rsaPublicPrivateKey">
+                                <constraints>
+                                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Public key"/>
+                                </properties>
+                              </component>
+                              <grid id="bc862" binding="rsaEncryptDecryptPanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                                <constraints>
+                                  <grid row="1" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <component id="74012" class="javax.swing.JTextField" binding="rsaPublicKeyField">
+                                    <constraints>
+                                      <card name="Encrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                  </component>
+                                  <component id="eaa4d" class="javax.swing.JTextField" binding="rsaPrivateKeyField">
+                                    <constraints>
+                                      <card name="Decrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                  </component>
+                                </children>
+                              </grid>
+                              <component id="83e4" class="javax.swing.JTextField" binding="rsaKeyLengthField">
+                                <constraints>
+                                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="f1a8c" class="javax.swing.JLabel" binding="rsaKeyLengthLabel">
+                                <constraints>
+                                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Key length"/>
+                                </properties>
+                              </component>
+                              <component id="bc003" class="javax.swing.JButton" binding="generateKeyButton">
+                                <constraints>
+                                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Generate key pair"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="f0da" binding="dhPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <card name="DH"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children/>
+                          </grid>
+                        </children>
                       </grid>
                     </children>
                   </grid>
@@ -437,8 +574,16 @@
       <member id="6cc4d"/>
     </group>
     <group name="buttonGroup1">
-      <member id="98607"/>
       <member id="f326f"/>
+      <member id="98607"/>
+    </group>
+    <group name="buttonGroup2">
+      <member id="dbfa1"/>
+      <member id="3454d"/>
+    </group>
+    <group name="buttonGroup3">
+      <member id="d0264"/>
+      <member id="e9edc"/>
     </group>
   </buttonGroups>
 </form>

@@ -2,6 +2,7 @@ package cryptography.asymmetric.GUI;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -16,10 +17,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -43,7 +41,7 @@ public class MainForm extends JFrame {
   private JPanel mainPanel;
   private JLabel progNameLabel;
   private JLabel authorLabel;
-  private JList<String> list1;
+  private JList<String> algorithmsList;
   private JScrollPane scrollPanel;
   private JPanel dataPanel;
   private JPanel menuPanel;
@@ -89,6 +87,22 @@ public class MainForm extends JFrame {
   private JLabel githubLink;
   private JPanel linksPanel;
   private JLabel githubLabel;
+  private JPanel paramsAlgorithmsPanel;
+  private JPanel rsaPanel;
+  private JRadioButton rsaPKCS1OAEPPaddingButton;
+  private JRadioButton rsaNonePaddingButton;
+  private JRadioButton autoKeyGenButton;
+  private JRadioButton manualKeyGenButton;
+  private JTextField rsaModulusField;
+  private JLabel rsaPublicPrivateKey;
+  private JTextField rsaPublicKeyField;
+  private JPanel rsaEncryptDecryptPanel;
+  private JTextField rsaPrivateKeyField;
+  private JTextField rsaKeyLengthField;
+  private JButton generateKeyButton;
+  private JLabel rsaModulusLabel;
+  private JPanel dhPanel;
+  private JLabel rsaKeyLengthLabel;
   private JTextArea currentInputFileArea;
   private JLabel fileSizeLabel;
   private JLabel currentFileLabel;
@@ -100,7 +114,7 @@ public class MainForm extends JFrame {
 
   public MainForm() {
     super();
-    setSize(new Dimension(650, 500));
+    setSize(new Dimension(800, 500));
     setVisible(true);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     setContentPane(mainPanel);
@@ -126,7 +140,7 @@ public class MainForm extends JFrame {
     //scrollInputPanel.getVerticalScrollBar().setUI(scrollArrow);
     //scrollPanel.getVerticalScrollBar().setUI(scrollArrow);
     logsTextArea.setBackground(dataPanel.getBackground());
-    list1.setBackground(dataPanel.getBackground());
+    algorithmsList.setBackground(dataPanel.getBackground());
     currentFilePathField.setBackground(dataPanel.getBackground());
     outputCurrentFilePathField.setBackground(dataPanel.getBackground());
     logsTextArea.setWrapStyleWord(true);
@@ -148,10 +162,12 @@ public class MainForm extends JFrame {
     chooseInputFileButton.addActionListener(cfl);
     chooseOutputFileButton.addActionListener(cfl);
     logsTextArea.setText("1.Choose input/output format -> enter data according to chosen format\n2.Choose encrypt or decrypt -> set parameters\n3.Press «Calculate» button");
-    //logsTextArea.setText("QWEWQ");
     scrollPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 2, 0, Color.BLACK));
     menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK));
     algorithmsPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+    encryptDecryptPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+    outputTipLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+    logsTextArea.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     outputResultPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     paramsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     logsPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
@@ -161,16 +177,101 @@ public class MainForm extends JFrame {
     outputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     inputDataPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     calculateButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-    algNameLabel.setText(list1.getSelectedValue());
-    //inputFileChooser.showOpenDialog(this);
-    list1.addListSelectionListener(new MenuSelectionListener());
+    algNameLabel.setText(algorithmsList.getSelectedValue());
+    algorithmsList.addListSelectionListener(new MenuSelectionListener());
+    autoKeyGenButton.setSelected(true);
+    UserSelections.currentAlgorithm = algorithmsList.getSelectedValue();
+    UserSelections.keyGenAutoOrManually = autoKeyGenButton.isSelected();
+    Dimension rsaKeyLabel = new Dimension(50, 10);
+
+    //RSA
+    rsaNonePaddingButton.setSelected(true);
+    rsaPublicPrivateKey.setMinimumSize(rsaKeyLabel);
+    rsaPublicPrivateKey.setMaximumSize(rsaKeyLabel);
+    rsaPublicPrivateKey.setPreferredSize(rsaKeyLabel);
+    rsaPublicKeyField.setEditable(!UserSelections.keyGenAutoOrManually);
+    rsaPrivateKeyField.setEditable(!UserSelections.keyGenAutoOrManually);
+    rsaModulusField.setEditable(!UserSelections.keyGenAutoOrManually);
+    rsaKeyLengthField.setEditable(UserSelections.keyGenAutoOrManually);
+    generateKeyButton.setEnabled(UserSelections.keyGenAutoOrManually);
+
+    EncryptDecryptListener encryptDecryptListener = new EncryptDecryptListener();
+    encryptRadioButton.addItemListener(encryptDecryptListener);
+    decryptRadioButton.addItemListener(encryptDecryptListener);
+    AutoManualKeyGenListener autoManualKeyGenListener = new AutoManualKeyGenListener();
+    autoKeyGenButton.addItemListener(autoManualKeyGenListener);
+    manualKeyGenButton.addItemListener(autoManualKeyGenListener);
   }
 
   private class MenuSelectionListener implements ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-      algNameLabel.setText("<html>" + list1.getSelectedValue() + "</html>");
+      algNameLabel.setText("<html>" + algorithmsList.getSelectedValue() + "</html>");
+      UserSelections.currentAlgorithm = algorithmsList.getSelectedValue();
+      changePlane();
+    }
+  }
+
+  private class AutoManualKeyGenListener implements ItemListener {
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+      JRadioButton button = (JRadioButton) e.getItem();
+      if (button.isSelected()) {
+        UserSelections.keyGenAutoOrManually = button.getText().equals("Auto");
+        changeAutoOrManually();
+      }
+    }
+  }
+
+  private class EncryptDecryptListener implements ItemListener {
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+      JRadioButton button = (JRadioButton) e.getItem();
+      if (button.isSelected()) {
+        UserSelections.encryptOrDecrypt = button.getText();
+        //UserSelections.keyGenAutoOrManually = autoKeyGenButton
+        changePlane();
+      }
+    }
+  }
+
+  private void changePlane() {
+    CardLayout cardLayout = (CardLayout) paramsAlgorithmsPanel.getLayout();
+    cardLayout.show(paramsAlgorithmsPanel, UserSelections.currentAlgorithm);
+    Container panel = null;
+    switch (UserSelections.currentAlgorithm) {
+      case "RSA" -> {
+        cardLayout = (CardLayout) rsaEncryptDecryptPanel.getLayout();
+        panel = rsaEncryptDecryptPanel;
+      }
+    }
+    cardLayout.show(panel, UserSelections.encryptOrDecrypt);
+
+    //Остальные изменения интерфейса, несвязанные с CardLayout
+    changeEncryptOrDecrypt();
+    changeAutoOrManually();
+  }
+
+  private void changeAutoOrManually() {
+    switch (UserSelections.currentAlgorithm) {
+      case "RSA" -> {
+        rsaModulusField.setEditable(!UserSelections.keyGenAutoOrManually);
+        rsaPublicKeyField.setEditable(!UserSelections.keyGenAutoOrManually);
+        rsaPrivateKeyField.setEditable(!UserSelections.keyGenAutoOrManually);
+        rsaKeyLengthField.setEditable(UserSelections.keyGenAutoOrManually);
+        generateKeyButton.setEnabled(UserSelections.keyGenAutoOrManually);
+      }
+    }
+  }
+
+  private void changeEncryptOrDecrypt() {
+    switch (UserSelections.currentAlgorithm) {
+      case "RSA" -> {
+        rsaPublicPrivateKey.setText(UserSelections.encryptOrDecrypt.equals("Encrypt") ? "Public key" : "Private key");
+      }
     }
   }
 
