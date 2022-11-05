@@ -7,22 +7,33 @@ import java.util.Arrays;
 
 public class OAEP implements Padding {
 
+  public String padding;
+
+  public byte[] seed;
+
+  public byte[] label;
+
+  public int bytesKeyLength;
+
   /**
    * Паддинд по стандарту PKCS#1 v2.2 шифруемого алгоритмом RSA сообщения. <p>В RFC8017 требуется seed фиксированного размера (длины хэш алгоритма) - для этого берется хэш от seed произвольного размера при помощи того же алгоритма хэширования</p>
    * @see <a href="https://www.rfc-editor.org/rfc/rfc8017">Докумментация на PKCS</a>
    * @param message сообщение, которое планируется шифровать
-   * @param seed добавление недетерминированности
-   * @param bytesKeyLength длина ключа (модуля) в RSA
-   * @param label дополнительный текст для проверки целостности
+   * @param params параметры паддинга: seed - добавление недетерминированности, bytesKeyLength - длина ключа (модуля) в RSA, label - дополнительный текст для проверки целостности
    * @return {@code byte[]} сообщение, в которое добавлен паддинг
    */
-  public static byte[] wrap(byte[] message, byte[] seed, int bytesKeyLength, byte[] label)
+  public static byte[] wrap(byte[] message, OAEP params)
   throws IllegalArgumentException {
+    int bytesKeyLength = params.bytesKeyLength;
+    byte[] label = params.label;
+    byte[] seed = params.seed;
     MessageDigest digest = Numbers.digest;
     //Длина возвращаемого хэша с выбранным алгоритмом (в байтах)
     int bytesDigestLength = digest.getDigestLength();
     //Проверка на максимальную длину одного сообщения - если не проходит, сообщение нужно делить
     if (message.length > bytesKeyLength - 2 * bytesDigestLength - 2) {
+      System.out.println(message.length);
+      System.out.println(bytesKeyLength);
       throw new IllegalArgumentException("Message size too big");
     }
     //Ограничение на длину вспомогательного текста - метки (используется для идентификации шифруемого сообщения)
@@ -58,13 +69,14 @@ public class OAEP implements Padding {
    * Удаление паддинга расшифрованного алгоритмом RSA сообщения. По стандарту PKCS#1 v2.2
    * @see <a href="https://www.rfc-editor.org/rfc/rfc8017">Докумментация на PKCS</a>
    * @param paddedMessage расшифрованное сообщение
-   * @param bytesKeyLength длина ключа (модуля) в RSA
-   * @param label дополнительный текст для проверки целостности
+   * @param params паддинга: label - дополнительный текст для проверки целостности, bytesKeyLength - длина ключа (модуля) в RSA (знание seed при удалении паддинга не нужно)
    * @return {@code byte[]} сообщение, из которого удален паддинг
    * @throws IllegalArgumentException При некорректном удалении паддинга на стадии проверки
    */
-  public static byte[] unwrap(byte[] paddedMessage, int bytesKeyLength, byte[] label)
+  public static byte[] unwrap(byte[] paddedMessage, OAEP params)
       throws IllegalArgumentException {
+    byte[] label = params.label;
+    int bytesKeyLength = params.bytesKeyLength;
     MessageDigest digest = Numbers.digest;
     //Длина возвращаемого хэша с выбранным алгоритмом (в байтах)
     int bytesDigestLength = digest.getDigestLength();
@@ -107,20 +119,47 @@ public class OAEP implements Padding {
     return Arrays.copyOfRange(dataBlock, i, dataBlock.length);
   }
 
-  public static byte[] wrap(byte[] message, byte[] seed, int keyLength) {
-    return wrap(message, seed, keyLength, "".getBytes(Numbers.charset));
+  //OAEP экземпляр содержит параметры паддинга
+  public OAEP(byte[] seed, int bytesKeyLength, byte[] label) {
+    this.seed = seed;
+    this.bytesKeyLength = bytesKeyLength;
+    this.label = label;
+    this.padding = "PKCS#1-OAEP";
   }
 
-  public static byte[] wrap(byte[] message, int keyLength, byte[] label) {
-    return wrap(message, "".getBytes(Numbers.charset), keyLength, label);
+  public OAEP(byte[] seed, int bytesKeyLength) {
+    this.seed = seed;
+    this.bytesKeyLength = bytesKeyLength;
+    this.label = "".getBytes();
+    this.padding = "PKCS#1-OAEP";
   }
 
-  public static byte[] wrap(byte[] message, int keyLength) {
-    return wrap(message, "".getBytes(Numbers.charset), keyLength);
+  public OAEP(int bytesKeyLength, byte[] label) {
+    this.seed = "".getBytes();
+    this.bytesKeyLength = bytesKeyLength;
+    this.label = label;
+    this.padding = "PKCS#1-OAEP";
   }
 
-  public static byte[] unwrap(byte[] paddedMessage, int keyLength) {
-    return unwrap(paddedMessage, keyLength, new byte[0]);
+  //Без параметров - без паддинга
+  public OAEP() {
+    this.padding = "None";
   }
+//
+//  public static byte[] wrap(byte[] message, byte[] seed, int keyLength) throws IllegalArgumentException {
+//    return wrap(message, seed, keyLength, "".getBytes(Numbers.charset));
+//  }
+//
+//  public static byte[] wrap(byte[] message, int keyLength, byte[] label) throws IllegalArgumentException {
+//    return wrap(message, "".getBytes(Numbers.charset), keyLength, label);
+//  }
+//
+//  public static byte[] wrap(byte[] message, int keyLength) throws IllegalArgumentException {
+//    return wrap(message, "".getBytes(Numbers.charset), keyLength);
+//  }
+//
+//  public static byte[] unwrap(byte[] paddedMessage, int keyLength) throws IllegalArgumentException {
+//    return unwrap(paddedMessage, keyLength, new byte[0]);
+//  }
 
 }

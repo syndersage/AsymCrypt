@@ -1,5 +1,9 @@
 package cryptography.asymmetric.GUI;
 
+import cryptography.asymmetric.Numbers;
+import cryptography.asymmetric.RSA.OAEP;
+import cryptography.asymmetric.RSA.RSA;
+import cryptography.asymmetric.RSA.RSAKeys;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -14,9 +18,18 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
@@ -103,6 +117,13 @@ public class MainForm extends JFrame {
   private JLabel rsaModulusLabel;
   private JPanel dhPanel;
   private JLabel rsaKeyLengthLabel;
+  private JPanel rsaPaddingPanel;
+  private JTextField rsaPaddingSeedField;
+  private JTextField rsaPaddingLabelField;
+  private JLabel rsaPaddingLabelLabel;
+  private JLabel rsaPaddingSeedLabel;
+  private JPanel rsaPaddingOAEPPanel;
+  private JButton outputToInputButton;
   private JTextArea currentInputFileArea;
   private JLabel fileSizeLabel;
   private JLabel currentFileLabel;
@@ -154,7 +175,9 @@ public class MainForm extends JFrame {
     inputArea.setMargin(new Insets(5, 5, 5, 5));
     calculateButton.setMargin(new Insets(25, 25, 25, 25));
     logsTextArea.getCaret().setBlinkRate(0);
-    fileRadioButton.addItemListener(new InputTypeListener());
+    InputTypeListener inputTypeListener = new InputTypeListener();
+    fileRadioButton.addItemListener(inputTypeListener);
+    plainTextRadioButton.addItemListener(inputTypeListener);
     Border emptyBorder = BorderFactory.createEmptyBorder();
     plainTextRadioButton.setBorder(emptyBorder);
     fileRadioButton.setBorder(emptyBorder);
@@ -172,6 +195,7 @@ public class MainForm extends JFrame {
     paramsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     logsPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     inputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    rsaPaddingOAEPPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
     currentFilePathField.setBorder(BorderFactory.createEmptyBorder());
     outputCurrentFilePathField.setBorder(BorderFactory.createEmptyBorder());
     outputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -194,6 +218,9 @@ public class MainForm extends JFrame {
     rsaModulusField.setEditable(!UserSelections.keyGenAutoOrManually);
     rsaKeyLengthField.setEditable(UserSelections.keyGenAutoOrManually);
     generateKeyButton.setEnabled(UserSelections.keyGenAutoOrManually);
+    RSAPaddingListener rsaPaddingListener = new RSAPaddingListener();
+    rsaNonePaddingButton.addItemListener(rsaPaddingListener);
+    rsaPKCS1OAEPPaddingButton.addItemListener(rsaPaddingListener);
 
     EncryptDecryptListener encryptDecryptListener = new EncryptDecryptListener();
     encryptRadioButton.addItemListener(encryptDecryptListener);
@@ -201,10 +228,26 @@ public class MainForm extends JFrame {
     AutoManualKeyGenListener autoManualKeyGenListener = new AutoManualKeyGenListener();
     autoKeyGenButton.addItemListener(autoManualKeyGenListener);
     manualKeyGenButton.addItemListener(autoManualKeyGenListener);
+    GenerateKeyListener generateKeyListener = new GenerateKeyListener();
+    generateKeyButton.addActionListener(generateKeyListener);
+    calculateButton.addActionListener(new CalculateListener());
+    //outputToInputButton.addActionListener(new OutputToInputListener());
+    outputToInputButton.addActionListener(new CalculationBackgroundListener());
+  }
+
+  private class OutputToInputListener implements ActionListener {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      try {
+        inputArea.setText(new String(UserSelections.testUserOutput, Numbers.charsetString));
+      } catch (Exception exception) {
+        exception.printStackTrace();
+      }
+    }
   }
 
   private class MenuSelectionListener implements ListSelectionListener {
-
     @Override
     public void valueChanged(ListSelectionEvent e) {
       algNameLabel.setText("<html>" + algorithmsList.getSelectedValue() + "</html>");
@@ -225,6 +268,141 @@ public class MainForm extends JFrame {
     }
   }
 
+  private class RSAPaddingListener implements ItemListener {
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+      JRadioButton button = (JRadioButton) e.getItem();
+      if (button.isSelected()) {
+        UserSelections.rsaPadding = button.getText();
+        System.out.println(UserSelections.rsaPadding);
+        CardLayout cl = (CardLayout) rsaPaddingPanel.getLayout();
+        cl.show(rsaPaddingPanel, UserSelections.rsaPadding);
+      }
+    }
+  }
+
+  private class CalculateListener implements ActionListener {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      try {
+        byte[] userInput = readUserInput();
+        switch (UserSelections.currentAlgorithm) {
+          case "RSA" -> {
+            RSAKeys keys;
+            if (UserSelections.encryptOrDecrypt.equals("Encrypt")) {
+              keys = new RSAKeys(rsaPublicKeyField.getText().strip().length() != 0 ?
+                  new BigInteger(rsaPublicKeyField.getText().strip()) : null, null,
+                  rsaModulusField.getText().strip().length() != 0 ?
+                      new BigInteger(rsaModulusField.getText().strip()) : null);
+            } else {
+              keys = new RSAKeys(null,
+                  rsaPrivateKeyField.getText().strip().length() != 0 ?
+                      new BigInteger(rsaPrivateKeyField.getText().strip()) : null,
+                  rsaModulusField.getText().strip().length() != 0 ?
+                      new BigInteger(rsaModulusField.getText().strip()) : null);
+            }
+            OAEP paddingParams = new OAEP();
+            try {
+              switch (UserSelections.rsaPadding) {
+                case "None" -> paddingParams = new OAEP();
+                case "PKCS#1-OAEP" -> paddingParams = new OAEP(rsaPaddingSeedField.getText().getBytes(Numbers.charsetString), keys.modulus.length, rsaPaddingLabelField.getText().getBytes(Numbers.charsetString));
+              }
+            } catch (Exception exception) {
+              exception.printStackTrace();
+            }
+            writeCalculatedOutput(UserSelections.encryptOrDecrypt.equals("Encrypt") ? RSA.encrypt(userInput, keys, paddingParams) : RSA.decrypt(userInput, keys, paddingParams));
+          }
+        }
+      } catch (Exception exception) {
+        exceptionLogger(exception);
+      }
+    }
+  }
+
+  private byte[] readUserInput() throws IOException, NullPointerException {
+    System.out.println(Arrays.toString(inputArea.getText().getBytes()));
+    return UserSelections.fileInput ? Files.readAllBytes(Path.of(UserSelections.inputFilePath)) : inputArea.getText().getBytes(Numbers.charsetString);
+  }
+
+  private void writeCalculatedOutput(byte[] data) throws IOException, NullPointerException {
+    UserSelections.testUserOutput = data;
+    if (UserSelections.fileInput) {
+      Files.write(Path.of(UserSelections.outputFilePath), data);
+      outputFileSizeTipLabel.setText(String.valueOf(Files.size(Path.of(UserSelections.outputFilePath))));
+    } else {
+      System.out.println("datadata1: " + Arrays.toString(data));
+      outputArea.setText(new String(data, Numbers.charsetString));
+      System.out.println("datadata2: " + Arrays.toString(
+          outputArea.getText().getBytes(Numbers.charsetString)));
+      System.out.println(new String(data, Numbers.charsetString).toCharArray());
+    }
+  }
+
+  private class CalculationBackground extends SwingWorker<Void, Void> {
+
+    @Override
+    protected Void doInBackground() throws Exception {
+      setProgress(0);
+      for (int i = 0; i < 10; i++) {
+        Thread.sleep(1000);
+        setProgress(i * 10);
+      }
+      return null;
+    }
+
+    @Override
+    public void done() {
+      System.out.println("DONE!!!");
+    }
+  }
+
+  private class CalculationBackgroundListener implements ActionListener {
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      CalculationBackground task = new CalculationBackground();
+      task.addPropertyChangeListener(new CalculationBackgroundPropertyChange());
+      task.execute();
+    }
+  }
+
+  private class CalculationBackgroundPropertyChange implements PropertyChangeListener {
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+      System.out.println((Integer) evt.getNewValue());
+    }
+  }
+
+  private class GenerateKeyListener implements ActionListener {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      try {
+        switch (UserSelections.currentAlgorithm) {
+          case "RSA" -> {
+            int rsaKeyLength;
+            try {
+              rsaKeyLength = Integer.parseInt(rsaKeyLengthField.getText());
+            } catch (NumberFormatException exception) {
+              logsTextArea.setText("Incorrect key length field input format: " + rsaKeyLengthField.getText());
+              return;
+            }
+            RSAKeys keys = new RSAKeys(rsaKeyLength);
+            rsaPublicKeyField.setText(new BigInteger(1, keys.publicKey).toString());
+            rsaPrivateKeyField.setText(new BigInteger(1, keys.privateKey).toString());
+            rsaModulusField.setText(new BigInteger(1, keys.modulus).toString());
+          }
+        }
+      } catch (Exception exception) {
+        exceptionLogger(exception);
+      }
+    }
+  }
+
   private class EncryptDecryptListener implements ItemListener {
 
     @Override
@@ -239,6 +417,10 @@ public class MainForm extends JFrame {
   }
 
   private void changePlane() {
+    for (var entry:
+    Charset.availableCharsets().entrySet()) {
+      System.out.println(entry.getValue());
+    }
     CardLayout cardLayout = (CardLayout) paramsAlgorithmsPanel.getLayout();
     cardLayout.show(paramsAlgorithmsPanel, UserSelections.currentAlgorithm);
     Container panel = null;
@@ -280,19 +462,37 @@ public class MainForm extends JFrame {
     @Override
     public void actionPerformed(ActionEvent e) {
       int choice;
+      JTextField pathField;
+      JLabel sizeLabel;
+      JFileChooser fileChooser;
       if (e.getActionCommand().equals("InputFile")) {
-        choice = inputFileChooser.showOpenDialog(mainPanel);
-        if (choice == JFileChooser.APPROVE_OPTION) {
-          currentFilePathField.setText(inputFileChooser.getSelectedFile().toString());
-          currentFilePathField.setToolTipText(currentFilePathField.getText());
-          fileSizeTipLabel.setText("Size (bytes): " + 512);
-        }
+        fileChooser = inputFileChooser;
+        pathField = currentFilePathField;
+        sizeLabel = fileSizeTipLabel;
       } else {
-       choice = outputFileChooser.showOpenDialog(mainPanel);
-        if (choice == JFileChooser.APPROVE_OPTION) {
-          outputCurrentFilePathField.setText(outputFileChooser.getSelectedFile().toString());
-          outputCurrentFilePathField.setToolTipText(outputCurrentFilePathField.getText());
-          outputFileSizeTipLabel.setText("Size (bytes): " + 512);
+        fileChooser = outputFileChooser;
+        pathField = outputCurrentFilePathField;
+        sizeLabel = outputFileSizeTipLabel;
+      }
+      choice = fileChooser.showOpenDialog(mainPanel);
+      if (choice == JFileChooser.APPROVE_OPTION) {
+        String filePath = fileChooser.getSelectedFile().toString();
+        Path path = Path.of(filePath);
+        if (Files.isReadable(path)) {
+          pathField.setText(filePath);
+          pathField.setToolTipText(pathField.getText());
+          if (e.getActionCommand().equals("InputFile")) {
+            UserSelections.inputFilePath = filePath;
+          } else {
+            UserSelections.outputFilePath = filePath;
+          }
+          try {
+            sizeLabel.setText("Size (in bytes): " + Files.size(path));
+          } catch (IOException exception) {
+            sizeLabel.setText("Size (in bytes): " + -1);
+          }
+        } else {
+          exceptionLogger(new Exception("File does not exist or unreadable: " + filePath));
         }
       }
     }
@@ -302,11 +502,25 @@ public class MainForm extends JFrame {
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-      CardLayout cl = (CardLayout) changeInputTypePanel.getLayout();
-      cl.next(changeInputTypePanel);
-      cl = (CardLayout) changeOutputTypePanel.getLayout();
-      cl.next(changeOutputTypePanel);
+      JRadioButton button = (JRadioButton) e.getItem();
+      if (button.isSelected()) {
+        CardLayout cl = (CardLayout) changeInputTypePanel.getLayout();
+        cl.next(changeInputTypePanel);
+        cl = (CardLayout) changeOutputTypePanel.getLayout();
+        cl.next(changeOutputTypePanel);
+        UserSelections.fileInput = button.getText().equals("File");
+        //UserSelections.keyGenAutoOrManually = autoKeyGenButton
+        System.out.println(UserSelections.fileInput);
+      }
     }
+  }
+
+  private void exceptionLogger(Exception exception) {
+    logsTextArea.setText("");
+    do {
+      logsTextArea.append(exception.getMessage());
+      exception = (Exception) exception.getCause();
+    } while (exception != null);
   }
 
   static class NoArrowScrollBarUI extends BasicScrollBarUI {

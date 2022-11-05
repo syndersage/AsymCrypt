@@ -5,16 +5,19 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import org.bouncycastle.jcajce.provider.digest.SHA1;
+import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.bouncycastle.math.Primes;
 
 public class Numbers {
 
   public static SecureRandom random = new SecureRandom();
 
-  public static MessageDigest digest = new SHA1.Digest();
+  public static MessageDigest digest = new SHA256.Digest();
 
-  public static Charset charset = StandardCharsets.UTF_8;
+  public static Charset charset = StandardCharsets.UTF_16LE;
+
+  //Кодировку нужно выбирать ту, которая используется ОС для отображения страниц (в винде проверить - chcp в powershell)
+  public static String charsetString = "IBM866";
 
   /**
    * Генерация криптографически безопасного случайного числа с длиной, кратной длине байта
