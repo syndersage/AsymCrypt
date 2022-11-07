@@ -373,6 +373,7 @@ public class MainForm extends JFrame {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+      System.out.println("!@#");
       System.out.println((Integer) evt.getNewValue());
     }
   }
