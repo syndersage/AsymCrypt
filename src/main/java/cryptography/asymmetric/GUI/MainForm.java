@@ -1,6 +1,5 @@
 package cryptography.asymmetric.GUI;
 
-import cryptography.asymmetric.Numbers;
 import cryptography.asymmetric.RSA.OAEP;
 import cryptography.asymmetric.RSA.RSA;
 import cryptography.asymmetric.RSA.RSAKeys;
@@ -25,11 +24,9 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -69,7 +67,6 @@ public class MainForm extends JFrame {
   private JRadioButton fileRadioButton;
   private JPanel outputResultPanel;
   private JTextArea outputArea;
-  private JLabel resultLabel;
   private JScrollPane scrollOutputPanel;
   private JLabel outputTipLabel;
   private JPanel inputDataAndParamsPanel;
@@ -124,6 +121,9 @@ public class MainForm extends JFrame {
   private JLabel rsaPaddingSeedLabel;
   private JPanel rsaPaddingOAEPPanel;
   private JButton outputToInputButton;
+  private JPanel progressPanel;
+  private JProgressBar progressBar;
+  private JLabel progressLabel;
   private JTextArea currentInputFileArea;
   private JLabel fileSizeLabel;
   private JLabel currentFileLabel;
@@ -147,8 +147,8 @@ public class MainForm extends JFrame {
     inputTypePanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 40));
     outputResultPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 80));
     inputDataPanel.setPreferredSize(new Dimension(dataPanel.getWidth(), 100));
-    resultLabel.setPreferredSize(new Dimension(150, outputResultPanel.getHeight()));
-    calculateButtonPanel.setPreferredSize(new Dimension(150, inputDataPanel.getHeight()));
+    calculateButtonPanel.setPreferredSize(new Dimension(200, inputDataPanel.getHeight()));
+    progressPanel.setPreferredSize(new Dimension(200, inputDataPanel.getHeight()));
     Dimension scrollDim = new Dimension(10, 0);
     NoArrowScrollBarUI scrollArrow = new NoArrowScrollBarUI();
     scrollOutputPanel.getVerticalScrollBar().setPreferredSize(scrollDim);
@@ -192,7 +192,9 @@ public class MainForm extends JFrame {
     outputTipLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     logsTextArea.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     outputResultPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    outputResultPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     paramsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    progressPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 15));
     logsPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     inputFilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     rsaPaddingOAEPPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
@@ -206,6 +208,7 @@ public class MainForm extends JFrame {
     autoKeyGenButton.setSelected(true);
     UserSelections.currentAlgorithm = algorithmsList.getSelectedValue();
     UserSelections.keyGenAutoOrManually = autoKeyGenButton.isSelected();
+    UserSelections.progress = progressBar;
     Dimension rsaKeyLabel = new Dimension(50, 10);
 
     //RSA
@@ -240,7 +243,7 @@ public class MainForm extends JFrame {
     @Override
     public void actionPerformed(ActionEvent e) {
       try {
-        inputArea.setText(new String(UserSelections.testUserOutput, Numbers.charsetString));
+        inputArea.setText(new String(UserSelections.testUserOutput, UserSelections.charsetString));
       } catch (Exception exception) {
         exception.printStackTrace();
       }
@@ -275,7 +278,7 @@ public class MainForm extends JFrame {
       JRadioButton button = (JRadioButton) e.getItem();
       if (button.isSelected()) {
         UserSelections.rsaPadding = button.getText();
-        System.out.println(UserSelections.rsaPadding);
+        //System.out.println(UserSelections.rsaPadding);
         CardLayout cl = (CardLayout) rsaPaddingPanel.getLayout();
         cl.show(rsaPaddingPanel, UserSelections.rsaPadding);
       }
@@ -286,8 +289,54 @@ public class MainForm extends JFrame {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+      if (calculateButton.getText().equals("Calculate")) {
+        UserSelections.calculationThread = new CalculationBackground();
+        UserSelections.calculationThread.addPropertyChangeListener(new CalculationBackgroundPropertyChange());
+        UserSelections.calculationThread.execute();
+        calculateButton.setText("Stop");
+      } else {
+        UserSelections.calculationThread.cancel(true);
+        calculateButton.setText("Calculate");
+      }
+    }
+  }
+
+  private byte[] readUserInput() throws IOException, NullPointerException {
+    return UserSelections.fileInput ? Files.readAllBytes(Path.of(UserSelections.inputFilePath)) : inputArea.getText().getBytes(UserSelections.charsetString);
+  }
+
+  private boolean writeable(String strPath) {
+    try {
+      Path path = Path.of(strPath);
+      if (Files.isWritable(path)) {
+        return true;
+      }
+    } catch (Exception exception) {
+      return false;
+    }
+    return false;
+  }
+
+  private void writeCalculatedOutput(byte[] data) throws IOException, NullPointerException {
+    if (UserSelections.fileInput) {
+      Files.write(Path.of(UserSelections.outputFilePath), data);
+      outputFileSizeTipLabel.setText(
+          String.valueOf(Files.size(Path.of(UserSelections.outputFilePath))));
+    } else {
+      outputArea.setText(new String(data, UserSelections.charsetString));
+    }
+  }
+
+  private class CalculationBackground extends SwingWorker<Void, Void> {
+
+    @Override
+    protected Void doInBackground() throws InterruptedException {
       try {
         byte[] userInput = readUserInput();
+        if (UserSelections.fileInput && !writeable(UserSelections.outputFilePath)) {
+          throw new IOException("File does not exist or unable to write in it");
+        }
+        byte[] userOutput = new byte[0];
         switch (UserSelections.currentAlgorithm) {
           case "RSA" -> {
             RSAKeys keys;
@@ -304,57 +353,34 @@ public class MainForm extends JFrame {
                       new BigInteger(rsaModulusField.getText().strip()) : null);
             }
             OAEP paddingParams = new OAEP();
-            try {
-              switch (UserSelections.rsaPadding) {
-                case "None" -> paddingParams = new OAEP();
-                case "PKCS#1-OAEP" -> paddingParams = new OAEP(rsaPaddingSeedField.getText().getBytes(Numbers.charsetString), keys.modulus.length, rsaPaddingLabelField.getText().getBytes(Numbers.charsetString));
-              }
-            } catch (Exception exception) {
-              exception.printStackTrace();
+            switch (UserSelections.rsaPadding) {
+              case "None" -> paddingParams = new OAEP();
+              case "PKCS#1-OAEP" -> paddingParams = new OAEP(rsaPaddingSeedField.getText().getBytes(UserSelections.charsetString), keys.modulus.length, rsaPaddingLabelField.getText().getBytes(UserSelections.charsetString));
             }
-            writeCalculatedOutput(UserSelections.encryptOrDecrypt.equals("Encrypt") ? RSA.encrypt(userInput, keys, paddingParams) : RSA.decrypt(userInput, keys, paddingParams));
+            userOutput = UserSelections.encryptOrDecrypt.equals("Encrypt") ? RSA.encrypt(userInput, keys, paddingParams) : RSA.decrypt(userInput, keys, paddingParams);
           }
         }
+        if (Arrays.equals(userOutput, new byte[0])) {
+          return null;
+        }
+        writeCalculatedOutput(userOutput);
       } catch (Exception exception) {
         exceptionLogger(exception);
-      }
-    }
-  }
-
-  private byte[] readUserInput() throws IOException, NullPointerException {
-    System.out.println(Arrays.toString(inputArea.getText().getBytes()));
-    return UserSelections.fileInput ? Files.readAllBytes(Path.of(UserSelections.inputFilePath)) : inputArea.getText().getBytes(Numbers.charsetString);
-  }
-
-  private void writeCalculatedOutput(byte[] data) throws IOException, NullPointerException {
-    UserSelections.testUserOutput = data;
-    if (UserSelections.fileInput) {
-      Files.write(Path.of(UserSelections.outputFilePath), data);
-      outputFileSizeTipLabel.setText(String.valueOf(Files.size(Path.of(UserSelections.outputFilePath))));
-    } else {
-      System.out.println("datadata1: " + Arrays.toString(data));
-      outputArea.setText(new String(data, Numbers.charsetString));
-      System.out.println("datadata2: " + Arrays.toString(
-          outputArea.getText().getBytes(Numbers.charsetString)));
-      System.out.println(new String(data, Numbers.charsetString).toCharArray());
-    }
-  }
-
-  private class CalculationBackground extends SwingWorker<Void, Void> {
-
-    @Override
-    protected Void doInBackground() throws Exception {
-      setProgress(0);
-      for (int i = 0; i < 10; i++) {
-        Thread.sleep(1000);
-        setProgress(i * 10);
+        progressBar.setValue(0);
       }
       return null;
     }
 
     @Override
     public void done() {
-      System.out.println("DONE!!!");
+      if (UserSelections.calculationThread.isCancelled()) {
+        progressBar.setValue(0); //0% если пользователь отменил
+      } else if (progressBar.getValue() != 0 | progressBar.getMaximum() == 1) { //0% уже стоит если в процессе вылетела ошибка (исключение) или же длина прогресс бара равна всего 1
+        progressBar.setValue(progressBar.getMaximum()); //100% если не прерывалось и не возникало ошибок
+      }
+      calculateButton.setText("Calculate");
+      calculateButton.setBackground(Color.BLACK);
+      //calculateButton.setBackground(new Color(225, 255, 225));
     }
   }
 
@@ -373,8 +399,7 @@ public class MainForm extends JFrame {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-      System.out.println("!@#");
-      System.out.println((Integer) evt.getNewValue());
+      System.out.println(evt.getNewValue());
     }
   }
 
@@ -382,7 +407,17 @@ public class MainForm extends JFrame {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+      GenerateKeyBackground task = new GenerateKeyBackground();
+      task.execute();
+    }
+  }
+
+  private class GenerateKeyBackground extends SwingWorker<Void, Void> {
+
+    @Override
+    protected Void doInBackground() throws Exception {
       try {
+        generateKeyButton.setEnabled(false);
         switch (UserSelections.currentAlgorithm) {
           case "RSA" -> {
             int rsaKeyLength;
@@ -390,7 +425,7 @@ public class MainForm extends JFrame {
               rsaKeyLength = Integer.parseInt(rsaKeyLengthField.getText());
             } catch (NumberFormatException exception) {
               logsTextArea.setText("Incorrect key length field input format: " + rsaKeyLengthField.getText());
-              return;
+              return null;
             }
             RSAKeys keys = new RSAKeys(rsaKeyLength);
             rsaPublicKeyField.setText(new BigInteger(1, keys.publicKey).toString());
@@ -400,7 +435,10 @@ public class MainForm extends JFrame {
         }
       } catch (Exception exception) {
         exceptionLogger(exception);
+      } finally {
+        generateKeyButton.setEnabled(true);
       }
+      return null;
     }
   }
 
@@ -420,7 +458,7 @@ public class MainForm extends JFrame {
   private void changePlane() {
     for (var entry:
     Charset.availableCharsets().entrySet()) {
-      System.out.println(entry.getValue());
+      //System.out.println(entry.getValue());
     }
     CardLayout cardLayout = (CardLayout) paramsAlgorithmsPanel.getLayout();
     cardLayout.show(paramsAlgorithmsPanel, UserSelections.currentAlgorithm);
@@ -466,14 +504,17 @@ public class MainForm extends JFrame {
       JTextField pathField;
       JLabel sizeLabel;
       JFileChooser fileChooser;
+      String fileAbility;
       if (e.getActionCommand().equals("InputFile")) {
         fileChooser = inputFileChooser;
         pathField = currentFilePathField;
         sizeLabel = fileSizeTipLabel;
+        fileAbility = "readable";
       } else {
         fileChooser = outputFileChooser;
         pathField = outputCurrentFilePathField;
         sizeLabel = outputFileSizeTipLabel;
+        fileAbility = "writeable";
       }
       choice = fileChooser.showOpenDialog(mainPanel);
       if (choice == JFileChooser.APPROVE_OPTION) {
@@ -493,7 +534,7 @@ public class MainForm extends JFrame {
             sizeLabel.setText("Size (in bytes): " + -1);
           }
         } else {
-          exceptionLogger(new Exception("File does not exist or unreadable: " + filePath));
+          exceptionLogger(new Exception("File does not exist or un" + fileAbility + ": " + filePath));
         }
       }
     }
@@ -511,7 +552,7 @@ public class MainForm extends JFrame {
         cl.next(changeOutputTypePanel);
         UserSelections.fileInput = button.getText().equals("File");
         //UserSelections.keyGenAutoOrManually = autoKeyGenButton
-        System.out.println(UserSelections.fileInput);
+        //System.out.println(UserSelections.fileInput);
       }
     }
   }
@@ -580,7 +621,7 @@ public class MainForm extends JFrame {
   public static void main(String[] args) {
 
     try {
-      System.out.println(javax.swing.UIManager.getDefaults().getFont("Label.font"));
+      //System.out.println(javax.swing.UIManager.getDefaults().getFont("Label.font"));
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       UIManager.put("ToolTip.font", new Font("Dialog", Font.PLAIN, 10));
     } catch (Exception e) {
