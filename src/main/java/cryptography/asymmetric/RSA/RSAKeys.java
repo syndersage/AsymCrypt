@@ -3,7 +3,6 @@ package cryptography.asymmetric.RSA;
 import cryptography.asymmetric.BasicAlgorithms;
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;
-import java.util.Arrays;
 
 public class RSAKeys {
 
@@ -29,7 +28,7 @@ public class RSAKeys {
   public RSAKeys(final int keyLength) throws IllegalArgumentException {
     BigInteger p, q, tempModulus;
     int byteKeyLength = keyLength / 8;
-    System.out.println(byteKeyLength);
+    //System.out.println(byteKeyLength);
     try {
       if (keyLength > MAX_KEY_LENGTH) {
         throw new IllegalArgumentException("Key length too big: max auto generation length is " + MAX_KEY_LENGTH + " bits");

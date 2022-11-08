@@ -1,5 +1,6 @@
 package cryptography.asymmetric.RSA;
 
+import cryptography.asymmetric.GUI.UserSelections;
 import cryptography.asymmetric.Numbers;
 import java.security.MessageDigest;
 
@@ -22,7 +23,7 @@ public class MGF1 {
     if (maskLength < 1) {
       throw new IllegalArgumentException("Mask too small");
     }
-    MessageDigest digest = Numbers.digest;
+    MessageDigest digest = UserSelections.digest;
     //Начальная маска - пустой массив байт
     byte[] mask = new byte[0];
     //Одна итерация позволяет создать маску длины хэша

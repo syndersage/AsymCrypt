@@ -1,5 +1,6 @@
 package cryptography.asymmetric.RSA;
 
+import cryptography.asymmetric.GUI.UserSelections;
 import cryptography.asymmetric.Numbers;
 import cryptography.asymmetric.Padding;
 import java.security.MessageDigest;
@@ -27,13 +28,13 @@ public class OAEP implements Padding {
     int bytesKeyLength = params.bytesKeyLength;
     byte[] label = params.label;
     byte[] seed = params.seed;
-    MessageDigest digest = Numbers.digest;
+    MessageDigest digest = UserSelections.digest;
     //Длина возвращаемого хэша с выбранным алгоритмом (в байтах)
     int bytesDigestLength = digest.getDigestLength();
     //Проверка на максимальную длину одного сообщения - если не проходит, сообщение нужно делить
     if (message.length > bytesKeyLength - 2 * bytesDigestLength - 2) {
-      System.out.println(message.length);
-      System.out.println(bytesKeyLength);
+      //System.out.println(message.length);
+      //System.out.println(bytesKeyLength);
       throw new IllegalArgumentException("Message size too big");
     }
     //Ограничение на длину вспомогательного текста - метки (используется для идентификации шифруемого сообщения)
@@ -77,7 +78,7 @@ public class OAEP implements Padding {
       throws IllegalArgumentException {
     byte[] label = params.label;
     int bytesKeyLength = params.bytesKeyLength;
-    MessageDigest digest = Numbers.digest;
+    MessageDigest digest = UserSelections.digest;
     //Длина возвращаемого хэша с выбранным алгоритмом (в байтах)
     int bytesDigestLength = digest.getDigestLength();
     byte[] labelHash = digest.digest(label);
