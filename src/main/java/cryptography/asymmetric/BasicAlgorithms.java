@@ -166,6 +166,7 @@ public class BasicAlgorithms {
     } else if (b == 0) {
       return a;
     }
+    //Сколько раз a и b делятся на 2
     int aPowerOf2 = trailingZeroes(a), bPowerOf2 = trailingZeroes(b);
     a >>= aPowerOf2;
     b >>= bPowerOf2;

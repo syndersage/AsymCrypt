@@ -12,13 +12,6 @@ public class Numbers {
 
   public static SecureRandom random = new SecureRandom();
 
-  public static MessageDigest digest = new SHA256.Digest();
-
-  public static Charset charset = StandardCharsets.UTF_16LE;
-
-  //Кодировку нужно выбирать ту, которая используется ОС для отображения страниц (в винде проверить - chcp в powershell)
-  public static String charsetString = "IBM866";
-
   /**
    * Генерация криптографически безопасного случайного числа с длиной, кратной длине байта
    * @param bits длина генерируемого случайного числа в битах
