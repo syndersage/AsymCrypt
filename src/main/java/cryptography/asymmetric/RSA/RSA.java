@@ -4,13 +4,11 @@ import cryptography.asymmetric.Cipher;
 import cryptography.asymmetric.GUI.UserSelections;
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;
-import java.util.Arrays;
 
 public class RSA implements Cipher {
 
 
   public static byte[] encrypt(byte[] data, RSAKeys keys, OAEP paddingParams) throws NullPointerException, IllegalArgumentException {
-    //System.out.println(keys.modulus.length);
     if (keys.publicKey == null | keys.modulus == null) {
       throw new NullPointerException("Key pair is not specified");
     }
@@ -31,10 +29,6 @@ public class RSA implements Cipher {
       throw new NullPointerException("Invalid padding name");
     }
     byte[][] splittedData = Numbers.splitArray(data, messageSize);
-    for (byte[] bytes : splittedData) {
-      //System.out.println(Arrays.toString(bytes));
-//      System.out.println(bytes.length);
-    }
     byte[][] encryptedData = new byte[splittedData.length][];
     BigInteger paddedChunk;
     UserSelections.progress.setMaximum(encryptedData.length);
@@ -50,10 +44,8 @@ public class RSA implements Cipher {
         encryptedData[i] = Numbers.i2osp(paddedChunk.modPow(publicKey, modulus), byteKeyLength);
       } else if (paddingParams.padding.equals("None")) {
         encryptedData[i] = Numbers.i2osp(new BigInteger(1, splittedData[i]).modPow(publicKey, modulus), byteKeyLength);
-        //System.out.println("ENCRYPTED: " + Arrays.toString(encryptedData[i]));
       }
     }
-    System.out.println(Arrays.toString(Numbers.convert2Dto1D(encryptedData)));
     //Блоки объединяются в один
     return Numbers.convert2Dto1D(encryptedData);
   }
@@ -62,14 +54,10 @@ public class RSA implements Cipher {
     if (keys.privateKey == null | keys.modulus == null) {
       throw new NullPointerException("Key pair is not specified");
     }
-    System.out.println(Arrays.toString(data));
     BigInteger privateKey = Numbers.os2ip(keys.privateKey);
     BigInteger modulus = Numbers.os2ip(keys.modulus);
     int byteKeyLength = keys.modulus.length;
     byte[][] splittedData = Numbers.splitArray(data, byteKeyLength);
-    for (byte[] bytes : splittedData) {
-      //System.out.println("RECEIVED: " + Arrays.toString(bytes));
-    }
     byte[][] decryptedData = new byte[splittedData.length][];
     BigInteger paddedChunk;
     UserSelections.progress.setMaximum(decryptedData.length);
@@ -86,7 +74,6 @@ public class RSA implements Cipher {
         decryptedData[i] = Numbers.i2osp(paddedChunk.modPow(privateKey, modulus), byteKeyLength);
         decryptedData[i] = OAEP.unwrap(decryptedData[i], paddingParams);
       } else if (paddingParams.padding.equals("None")) {
-        //System.out.println("WTF");
         decryptedData[i] = Numbers.i2osp(new BigInteger(1, splittedData[i]).modPow(privateKey, modulus), byteKeyLength);
         //Так как шифруемый блок размером (длина ключа в байтах - 1), то первый байт после операции сверху всегда будет ноль, а общий размер равен длине ключа в байтах
         //Это вызвано проблемой деления на блоки: если блоки будут длины ключа, то их целочисленное выражение может быть больше модуля, поэтому берется на 1 байт меньше
@@ -96,9 +83,6 @@ public class RSA implements Cipher {
       } else {
         throw new NullPointerException("Invalid padding name");
       }
-    }
-    for (byte[] bytes : decryptedData) {
-      //System.out.println("DECRYPTED: " + Arrays.toString(bytes));
     }
     return Numbers.convert2Dto1D(decryptedData);
   }

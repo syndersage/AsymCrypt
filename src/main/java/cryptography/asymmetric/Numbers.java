@@ -1,10 +1,16 @@
 package cryptography.asymmetric;
 
+import cryptography.asymmetric.GUI.UserSelections;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.bouncycastle.math.Primes;
 

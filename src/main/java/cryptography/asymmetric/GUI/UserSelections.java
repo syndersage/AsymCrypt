@@ -30,8 +30,8 @@ public class UserSelections {
 
   public static MessageDigest digest = new SHA256.Digest();
 
-  //Кодировку нужно выбирать ту, на которой у тебя ОС, хотя тут есть много вопросов (в винде проверить - chcp в powershell)
-  public static String charsetString = "ISO-8859-5";
+  //Кодировку нужно выбирать ту, на которой у тебя ОС (в винде проверить - chcp в powershell)
+  public static String charsetString = "CP866";
 
   public static JProgressBar progress;
 

@@ -33,8 +33,6 @@ public class OAEP implements Padding {
     int bytesDigestLength = digest.getDigestLength();
     //Проверка на максимальную длину одного сообщения - если не проходит, сообщение нужно делить
     if (message.length > bytesKeyLength - 2 * bytesDigestLength - 2) {
-      //System.out.println(message.length);
-      //System.out.println(bytesKeyLength);
       throw new IllegalArgumentException("Message size too big");
     }
     //Ограничение на длину вспомогательного текста - метки (используется для идентификации шифруемого сообщения)
