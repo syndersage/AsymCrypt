@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="cryptography.asymmetric.GUI.MainForm">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="1129" height="433"/>
+      <xy x="20" y="20" width="1129" height="439"/>
     </constraints>
     <properties>
       <font size="14"/>
@@ -34,12 +34,12 @@
                   <font size="14"/>
                   <model>
                     <item value="RSA"/>
+                    <item value="DH"/>
                     <item value="MD5"/>
                     <item value="SHA2"/>
                     <item value="CHACHA20"/>
-                    <item value="DH"/>
                   </model>
-                  <selectedIndex value="0"/>
+                  <selectedIndex value="-1"/>
                   <selectionMode value="0"/>
                 </properties>
               </component>
@@ -642,13 +642,132 @@
                               </component>
                             </children>
                           </grid>
-                          <grid id="f0da" binding="dhPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                          <grid id="f0da" binding="dhPanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
                             <constraints>
                               <card name="DH"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
-                            <children/>
+                            <children>
+                              <component id="55077" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Public modulus"/>
+                                </properties>
+                              </component>
+                              <component id="91cb5" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Public base"/>
+                                </properties>
+                              </component>
+                              <component id="58048" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+                                <constraints>
+                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="f939d" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+                                <constraints>
+                                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="35206" class="javax.swing.JButton" binding="generateSharedDataButton" default-binding="true">
+                                <constraints>
+                                  <grid row="0" column="2" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Generate shared data"/>
+                                </properties>
+                              </component>
+                              <grid id="f95b8" binding="dhEncryptDecryptPanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <grid id="ec5f9" binding="dhEncryptPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="0"/>
+                                    <constraints>
+                                      <card name="Encrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="7e335" class="javax.swing.JLabel" binding="dhAliceKeyLabel">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Private Alice key"/>
+                                        </properties>
+                                      </component>
+                                      <component id="472ba" class="javax.swing.JTextField" binding="dhAliceField">
+                                        <constraints>
+                                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                      <component id="471e3" class="javax.swing.JButton" binding="generateAliceKeyButton" default-binding="true">
+                                        <constraints>
+                                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Generate Alice key"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                  <grid id="b6132" binding="dhDecryptPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="0"/>
+                                    <constraints>
+                                      <card name="Decrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="99b59" class="javax.swing.JLabel" binding="dhBobKeyLabel">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Private Bob key"/>
+                                        </properties>
+                                      </component>
+                                      <component id="e05c8" class="javax.swing.JTextField" binding="dhBobField">
+                                        <constraints>
+                                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                      <component id="424fe" class="javax.swing.JButton" binding="generateBobKeyButton" default-binding="true">
+                                        <constraints>
+                                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Generate Bob key"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                            </children>
                           </grid>
                         </children>
                       </grid>
