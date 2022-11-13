@@ -25,13 +25,14 @@ public class Numbers {
    * @throws IllegalArgumentException длина в битах не кратна байту (8)
    */
   public static BigInteger genNumber(int bits) throws IllegalArgumentException {
-    if (bits % 8 != 0) {
+    if (bits < 1) {
       throw new IllegalArgumentException("Bits length have to be multiple of 8(byte)");
     }
-    byte[] bytes = new byte[bits / 8];
-    random.nextBytes(bytes);
-    //Преобразовывает массив байт в целочисленное число (OS2IP). Первый аргумент обозначает знак, с которым будут идти все числа (1 - все положительные, 0 - все отрицательные). Т.е. первый бит первого байта перестает обозначать знак
-    return new BigInteger(1, bytes);
+    BigInteger candidate = new BigInteger(bits, random);
+    while (candidate.equals(BigInteger.ZERO)) {
+      candidate = new BigInteger(bits, random);
+    }
+    return candidate;
   }
 
   /**
