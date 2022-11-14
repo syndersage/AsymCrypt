@@ -12,6 +12,7 @@ public class DHKeys {
   public static final BigInteger MIN_BASE = new BigInteger("2");
   public static final BigInteger MIN_MODULUS = new BigInteger("16");
 
+
   public DHKeys(int keyLength) throws IllegalArgumentException {
     if (keyLength < 4 | keyLength > 3072) {
       throw new IllegalArgumentException("Too " + (keyLength < 4 ? "small" : "big") + " key length");
@@ -22,11 +23,11 @@ public class DHKeys {
     } while (!subGroup.isProbablePrime(128));
     BigInteger multiplier;
     do {
-      multiplier = new BigInteger(32, Numbers.random);
+      multiplier = new BigInteger(16, Numbers.random);
       tempModulus = subGroup.multiply(multiplier).add(BigInteger.ONE);
     } while (!tempModulus.isProbablePrime(128));
     do {
-      tempBase = new BigInteger(32, Numbers.random).modPow(multiplier, tempModulus);
+      tempBase = new BigInteger(16, Numbers.random).modPow(multiplier, tempModulus);
     } while (tempBase.equals(BigInteger.ONE));
     base = tempBase.toByteArray();
     modulus = tempModulus.toByteArray();
