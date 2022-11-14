@@ -111,6 +111,13 @@ public class Numbers {
     return array1d;
   }
 
+  public static byte[] concatenateArrays(byte[] arr1, byte[] arr2) {
+    byte[] arrTemp = new byte[arr1.length + arr2.length];
+    System.arraycopy(arr1, 0, arrTemp, 0, arr1.length);
+    System.arraycopy(arr2, 0, arrTemp, arr1.length, arr2.length);
+    return arrTemp;
+  }
+
   /**
    * Преобразование в {@code BigInteger} неотрицательное целочисленное число массива байт
    * @see #i2osp(BigInteger, int)
