@@ -11,6 +11,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.bouncycastle.math.Primes;
 
@@ -116,6 +118,32 @@ public class Numbers {
     System.arraycopy(arr1, 0, arrTemp, 0, arr1.length);
     System.arraycopy(arr2, 0, arrTemp, arr1.length, arr2.length);
     return arrTemp;
+  }
+
+
+  /**
+   * Создается группа вычетов. Применяется в таких алгоритмах как DH, ElGamal и др. для создания простого числа с большим делителем функции эйлера от модуля
+   * <p>Группа может иметь как порядок равный функции Эйлера, т.е. для простого числа p это p-1, так и иной порядок, равный функции эйлера (p-1) делённой на один из её делителей, например (p-1)/2</p>
+   * @see <a href="https://crypto.stackexchange.com/questions/25980/about-primitive-roots-mod-n-in-diffie-hellman">Почему у p-1 (функции Эйлера простого числа) должен быть большой простой множитель</a>
+   * @see <a href="https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D1%8C_(%D1%82%D0%B5%D0%BE%D1%80%D0%B8%D1%8F_%D1%87%D0%B8%D1%81%D0%B5%D0%BB)">Первообразный корень (генератор) и то как он проверяется</a>
+   * @param orderBits Количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
+   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
+   */
+  public static Map<String, BigInteger> generateCyclicGroup(int orderBits) {
+    Map<String, BigInteger> groupParams = new HashMap<>();
+    BigInteger subGroup;
+    do {
+      subGroup = new BigInteger(orderBits, Numbers.random);
+    } while (subGroup.bitLength() != orderBits || !subGroup.isProbablePrime(128));
+    BigInteger multiplier, modulus;
+    do {
+      multiplier = new BigInteger(16, Numbers.random);
+      modulus = subGroup.multiply(multiplier).add(BigInteger.ONE);
+    } while (!modulus.isProbablePrime(128));
+    groupParams.put("Generator", new BigInteger(16, Numbers.random).modPow(multiplier, modulus));
+    groupParams.put("Modulus", modulus);
+    System.out.println(groupParams.get("Generator").modPow(subGroup, modulus));
+    return groupParams;
   }
 
   /**
