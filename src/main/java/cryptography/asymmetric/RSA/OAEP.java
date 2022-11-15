@@ -140,6 +140,13 @@ public class OAEP implements Padding {
     this.padding = "PKCS#1-OAEP";
   }
 
+  public OAEP(int bytesKeyLength) {
+    this.seed = "".getBytes();
+    this.bytesKeyLength = bytesKeyLength;
+    this.label = "".getBytes();
+    this.padding = "PKCS#1-OAEP";
+  }
+
   //Без параметров - без паддинга
   public OAEP() {
     this.padding = "None";
