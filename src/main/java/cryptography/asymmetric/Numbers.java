@@ -136,13 +136,14 @@ public class Numbers {
       subGroup = new BigInteger(orderBits, Numbers.random);
     } while (subGroup.bitLength() != orderBits || !subGroup.isProbablePrime(128));
     BigInteger multiplier, modulus;
+    //В алгоритме дважды используется генерация маленьких случайных чисел: один раз для создания модуля, второй для основания (генератора)
+    final int randomValueSize = 16;
     do {
-      multiplier = new BigInteger(16, Numbers.random);
+      multiplier = new BigInteger(randomValueSize, Numbers.random);
       modulus = subGroup.multiply(multiplier).add(BigInteger.ONE);
-    } while (!modulus.isProbablePrime(128));
-    groupParams.put("Generator", new BigInteger(16, Numbers.random).modPow(multiplier, modulus));
+    } while (modulus.bitLength() != (orderBits + randomValueSize) || !modulus.isProbablePrime(128));
+    groupParams.put("Generator", new BigInteger(randomValueSize, Numbers.random).modPow(multiplier, modulus));
     groupParams.put("Modulus", modulus);
-    System.out.println(groupParams.get("Generator").modPow(subGroup, modulus));
     return groupParams;
   }
 

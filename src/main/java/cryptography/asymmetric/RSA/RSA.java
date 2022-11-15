@@ -31,12 +31,12 @@ public class RSA implements Cipher {
     byte[][] splittedData = Numbers.splitArray(data, messageSize);
     byte[][] encryptedData = new byte[splittedData.length][];
     BigInteger paddedChunk;
-    UserSelections.progress.setMaximum(encryptedData.length);
+    //UserSelections.progress.setMaximum(encryptedData.length);
     for (int i = 0; i < encryptedData.length; i++) {
-      if (UserSelections.calculationThread.isCancelled()) {
-        return new byte[0];
-      }
-      UserSelections.progress.setValue(i);
+//      if (UserSelections.calculationThread.isCancelled()) {
+//        return new byte[0];
+//      }
+      //UserSelections.progress.setValue(i);
       if (paddingParams.padding.equals("PKCS#1-OAEP")) {
         //Каждому блоку добавляется паддинг (OAEP), результат преобразуется в положительный integer
         paddedChunk = Numbers.os2ip(OAEP.wrap(splittedData[i], paddingParams));
@@ -60,12 +60,12 @@ public class RSA implements Cipher {
     byte[][] splittedData = Numbers.splitArray(data, byteKeyLength);
     byte[][] decryptedData = new byte[splittedData.length][];
     BigInteger paddedChunk;
-    UserSelections.progress.setMaximum(decryptedData.length);
+    //UserSelections.progress.setMaximum(decryptedData.length);
     for (int i = 0; i < decryptedData.length; i++) {
-      if (UserSelections.calculationThread.isCancelled()) {
-        return new byte[0];
-      }
-      UserSelections.progress.setValue(i);
+//      if (UserSelections.calculationThread.isCancelled()) {
+//        return new byte[0];
+//      }
+      //UserSelections.progress.setValue(i);
       if (paddingParams.padding.equals("PKCS#1-OAEP")) {
         if (byteKeyLength - 2 * UserSelections.digest.getDigestLength() - 2 <= 0) {
           throw new IllegalArgumentException("Key length for selected padding+hash too small: padding gets " + ((UserSelections.digest.getDigestLength() * 8 * 2) + 2) + " bits");
