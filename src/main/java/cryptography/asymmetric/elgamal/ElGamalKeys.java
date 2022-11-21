@@ -1,4 +1,4 @@
-package cryptography.asymmetric.ElGamal;
+package cryptography.asymmetric.elgamal;
 
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;

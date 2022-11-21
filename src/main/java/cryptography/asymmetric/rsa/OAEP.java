@@ -1,6 +1,6 @@
-package cryptography.asymmetric.RSA;
+package cryptography.asymmetric.rsa;
 
-import cryptography.asymmetric.GUI.UserSelections;
+import cryptography.asymmetric.gui.UserSelections;
 import cryptography.asymmetric.Numbers;
 import cryptography.asymmetric.Padding;
 import java.security.MessageDigest;

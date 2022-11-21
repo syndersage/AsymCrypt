@@ -1,4 +1,4 @@
-package cryptography.asymmetric.DH;
+package cryptography.asymmetric.dh;
 
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;

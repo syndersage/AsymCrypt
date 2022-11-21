@@ -1,4 +1,4 @@
-package cryptography.asymmetric.Shamir;
+package cryptography.asymmetric.shamir;
 
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;

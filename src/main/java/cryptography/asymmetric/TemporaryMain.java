@@ -1,51 +1,37 @@
 package cryptography.asymmetric;
 
-import cryptography.asymmetric.RSA.OAEP;
-import cryptography.asymmetric.RSA.RSA;
-import cryptography.asymmetric.RSA.RSAKeys;
+import cryptography.asymmetric.md5.MD5;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class TemporaryMain {
 
+  public static BigInteger base;
+  public static BigInteger modulus;
+  public static BigInteger subgroup1;
+  public static byte[] privateKey;
+
   public static void main(String[] args) {
+    Security.addProvider(new BouncyCastleProvider());
     double startTime = System.nanoTime();
 
-    RSAKeys keys = new RSAKeys(2048);
-    OAEP paddingParams = new OAEP(new byte[0], 1024 / 8);
-    keys = new RSAKeys(1024);
-    System.out.println(keys.modulus.length);
-    System.out.println("Key gen time: " + (System.nanoTime() - startTime) / 1_000_000_000);
-
-    byte[] in = new byte[1];
+    MD5 md5 = new MD5();
+    String data = "012345678901234567890123456789012345678901234567890123456789";
+    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     try {
-      in = Files.readAllBytes(Path.of("F:\\Пользователи\\Pavel\\OneDrive\\Рабочий стол\\Уроки\\КМЗИ (2 семестр)\\Тест.docx"));
+      bytes = Files.readAllBytes(Path.of("F:\\Пользователи\\Pavel\\OneDrive\\Рабочий стол\\Уроки\\4 курс.rar"));
+      System.out.println(bytes.length);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
+    md5.calculate(bytes);
 
-    double encryptTime = System.nanoTime();
-
-    byte[] encryptedData = RSA.encrypt(in, keys, paddingParams);
-
-    System.out.println("Encrypt time: " + (System.nanoTime() - encryptTime) / 1_000_000_000);
-
-    double decryptTime = System.nanoTime();
-
-    System.out.println();
-    System.out.println();
-    System.out.println();
-
-    byte[] decryptedData = RSA.decrypt(encryptedData, keys, paddingParams);
-
-    try {
-      Files.write(Path.of("F:\\Пользователи\\Pavel\\OneDrive\\Рабочий стол\\Уроки\\КМЗИ (2 семестр)\\Тест4.docx"), decryptedData);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("Decrypt time: " + (System.nanoTime() - decryptTime) / 1_000_000_000);
+    System.out.println("Time: " + (System.nanoTime() - startTime) / 1_000_000_000);
   }
 
 }

@@ -1,7 +1,7 @@
-package cryptography.asymmetric.RSA;
+package cryptography.asymmetric.rsa;
 
 import cryptography.asymmetric.Cipher;
-import cryptography.asymmetric.GUI.UserSelections;
+import cryptography.asymmetric.gui.UserSelections;
 import cryptography.asymmetric.Numbers;
 import java.math.BigInteger;
 

@@ -1,4 +1,4 @@
-package cryptography.asymmetric.RSA;
+package cryptography.asymmetric.rsa;
 
 import cryptography.asymmetric.BasicAlgorithms;
 import cryptography.asymmetric.Numbers;

@@ -1,9 +1,6 @@
-package cryptography.asymmetric.GUI;
+package cryptography.asymmetric.gui;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.concurrent.Semaphore;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;

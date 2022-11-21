@@ -1,8 +1,8 @@
-package cryptography.asymmetric.ElGamal;
+package cryptography.asymmetric.elgamal;
 
-import cryptography.asymmetric.GUI.UserSelections;
+import cryptography.asymmetric.gui.UserSelections;
 import cryptography.asymmetric.Numbers;
-import cryptography.asymmetric.RSA.OAEP;
+import cryptography.asymmetric.rsa.OAEP;
 import java.math.BigInteger;
 import java.util.Arrays;
 

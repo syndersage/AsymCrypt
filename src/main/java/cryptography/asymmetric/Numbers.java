@@ -1,22 +1,15 @@
 package cryptography.asymmetric;
 
-import cryptography.asymmetric.GUI.UserSelections;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.bouncycastle.math.Primes;
 
 public class Numbers {
+
+  public static char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+      'a', 'b', 'c', 'd', 'e', 'f' };
 
   public static SecureRandom random = new SecureRandom();
 
@@ -176,5 +169,18 @@ public class Numbers {
     int signByte = dataArray[0] == 0 ? 1 : 0;
     System.arraycopy(dataArray, signByte, out, length - dataArray.length + signByte, dataArray.length - signByte);
     return out;
+  }
+
+  public static String bytesToBits(byte[] data) {
+    StringBuilder str = new StringBuilder();
+    for (byte dataByte : data) {
+      str.append(String.format("%8s", Integer.toBinaryString(dataByte & 0xFF)).replace(' ', '0'));
+      str.append(" ");
+    }
+    return str.toString();
+  }
+
+  public static int rotateIntLeft(int value, int rotateDistance) {
+    return (value << rotateDistance) | (value >>> (32 - rotateDistance));
   }
 }
