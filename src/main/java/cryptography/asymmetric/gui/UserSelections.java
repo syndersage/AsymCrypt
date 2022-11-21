@@ -19,6 +19,9 @@ public class UserSelections {
   //true - file input, false - text field input
   public static boolean fileInput = false;
 
+  //true - file output, false - text field output
+  public static boolean fileOutput = false;
+
   public static String inputFilePath;
 
   public static String outputFilePath;

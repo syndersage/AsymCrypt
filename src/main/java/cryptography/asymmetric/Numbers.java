@@ -171,16 +171,12 @@ public class Numbers {
     return out;
   }
 
-  public static String bytesToBits(byte[] data) {
-    StringBuilder str = new StringBuilder();
-    for (byte dataByte : data) {
-      str.append(String.format("%8s", Integer.toBinaryString(dataByte & 0xFF)).replace(' ', '0'));
-      str.append(" ");
+  public static String bytesToHex(byte[] bytes) {
+    char[] hexArr = new char[2 * bytes.length];
+    for (int i = 0, j = 0; j < bytes.length; j++) {
+      hexArr[i++] = HEX[(0xF0 & bytes[j]) >>> 4];
+      hexArr[i++] = HEX[0x0F & bytes[j]];
     }
-    return str.toString();
-  }
-
-  public static int rotateIntLeft(int value, int rotateDistance) {
-    return (value << rotateDistance) | (value >>> (32 - rotateDistance));
+    return new String(hexArr);
   }
 }
