@@ -121,8 +121,9 @@ public class SHA {
 
   public byte[] paddingLength(int bytesDataLength) {
     //Вычисляется длина сообщения в виде 8-байтового значения
-    int bitsDataLength = bytesDataLength * 8;
-    return Numbers.concatenateArrays(new byte[4], ByteBuffer.allocate(4).putInt(bitsDataLength).array());
+    long bitsDataLength = bytesDataLength * 8L;
+    return ByteBuffer.allocate(8).putLong(bitsDataLength).array();
+    //return Numbers.concatenateArrays(new byte[4], ByteBuffer.allocate(4).putInt(bitsDataLength).array());
   }
 
   public int[] toIntegerRightOrder(byte[] dataBlock) {

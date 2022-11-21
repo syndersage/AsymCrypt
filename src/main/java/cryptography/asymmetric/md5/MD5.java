@@ -52,11 +52,10 @@ public class MD5 {
   }
 
   public byte[] paddingLength(int byteDataLength) {
-    int bitDataLength = byteDataLength * 8;
-    bitDataLength = Integer.reverseBytes(bitDataLength);
-    byte[] dataLengthByteArray = ByteBuffer.allocate(4).putInt(bitDataLength).array();
+    long bitDataLength = byteDataLength * 8L;
+    bitDataLength = Long.reverseBytes(bitDataLength);
     //Так как на вход сразу передаются все данные, а не последовательно читаемый поток, то максимальная длина равна Integer.MAX, т.е. 32-битному значению, остальные 32 бита это нули
-    return Numbers.concatenateArrays(dataLengthByteArray, new byte[4]);
+    return ByteBuffer.allocate(8).putLong(bitDataLength).array();
   }
 
   public void hashBlock(byte[] dataBlock) {
