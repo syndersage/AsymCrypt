@@ -118,31 +118,50 @@ public class Numbers {
 
 
   /**
-   * Создается группа вычетов. Применяется в таких алгоритмах как DH, ElGamal и др. для создания простого числа с большим делителем функции эйлера от модуля
+   * Создается группа вычетов. Применяется в таких алгоритмах как DSA для создания простого числа с большим делителем функции эйлера от модуля
    * <p>Группа может иметь как порядок равный функции Эйлера, т.е. для простого числа p это p-1, так и иной порядок, равный функции эйлера (p-1) делённой на один из её делителей, например (p-1)/2</p>
    * @see <a href="https://crypto.stackexchange.com/questions/25980/about-primitive-roots-mod-n-in-diffie-hellman">Почему у p-1 (функции Эйлера простого числа) должен быть большой простой множитель</a>
    * @see <a href="https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D1%8C_(%D1%82%D0%B5%D0%BE%D1%80%D0%B8%D1%8F_%D1%87%D0%B8%D1%81%D0%B5%D0%BB)">Первообразный корень (генератор) и то как он проверяется</a>
-   * @param orderBits Количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
+   * @param modulusSize Длина модуля в битах
+   * @param groupSize Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
    * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
    */
-  public static Map<String, BigInteger> generateCyclicGroup(int orderBits) {
+  public static Map<String, BigInteger> generateCyclicGroup(int modulusSize, int groupSize) throws IllegalArgumentException {
+    if (modulusSize > 6144 | modulusSize < 8) {
+      throw new IllegalArgumentException("Modulus size must be between 8 and 6144 bits");
+    }
+    if (groupSize > 4096 | groupSize < 4) {
+      throw new IllegalArgumentException("Group order must be between 4 and 4096 bits");
+    }
     Map<String, BigInteger> groupParams = new HashMap<>();
     BigInteger subGroup;
     do {
-      subGroup = new BigInteger(orderBits, Numbers.random);
-    } while (subGroup.bitLength() != orderBits || !subGroup.isProbablePrime(128));
+      subGroup = new BigInteger(groupSize, Numbers.random);
+    } while (subGroup.bitLength() != groupSize || !subGroup.isProbablePrime(128));
     BigInteger multiplier, modulus;
     //В алгоритме дважды используется генерация маленьких случайных чисел: один раз для создания модуля, второй для основания (генератора)
     //Брать число, кратное байту (8) не рекомендуется, так как модуль в результате будет иметь первый байт 0х00 в начале (для обозначения знака)
     //Как результат выбранного числа кратного байту, модуль, имея длину равную p, на деле будет являться длины p-1
     //Выбранное таким образом число приведет к тому что шифруемые данные из p байт будут больше чем модуль, а соответственно не будут входить, в виде числа, в мультипликативную группу порядка p
+    int appendSize = modulusSize - groupSize;
     do {
-      multiplier = new BigInteger(randomValueSize, Numbers.random);
+      multiplier = new BigInteger(appendSize, Numbers.random);
       modulus = subGroup.multiply(multiplier).add(BigInteger.ONE);
-    } while (modulus.bitLength() != (orderBits + randomValueSize) || !modulus.isProbablePrime(128));
-    groupParams.put("Generator", new BigInteger(randomValueSize, Numbers.random).modPow(multiplier, modulus));
+    } while (modulus.bitLength() != (groupSize + appendSize) || !modulus.isProbablePrime(128));
+    BigInteger base = new BigInteger(appendSize, Numbers.random).modPow(multiplier, modulus);
+    groupParams.put("Generator", base);
     groupParams.put("Modulus", modulus);
+    groupParams.put("Order", subGroup);
     return groupParams;
+  }
+
+  /**
+   * Создается группа вычетов. Применяется в таких алгоритмах как DH, ElGamal и др. для создания большого числа с большим делителем функции Эйлера от модуля, при этом размер модуля не является фиксированной длины
+   * @param groupSize Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
+   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
+   */
+  public static Map<String, BigInteger> generateCyclicGroup(int groupSize) throws IllegalArgumentException {
+    return generateCyclicGroup(randomValueSize, groupSize);
   }
 
   /**
