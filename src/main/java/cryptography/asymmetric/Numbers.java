@@ -161,7 +161,7 @@ public class Numbers {
    * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
    */
   public static Map<String, BigInteger> generateCyclicGroup(int groupSize) throws IllegalArgumentException {
-    return generateCyclicGroup(randomValueSize, groupSize);
+    return generateCyclicGroup(randomValueSize + groupSize, groupSize);
   }
 
   /**

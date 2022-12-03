@@ -6,7 +6,6 @@ import java.math.BigInteger;
 
 public class RSAKeys {
 
-  public static boolean USE_DEFAULT_PUBLIC_KEY = true;
   public static final BigInteger DEFAULT_PUBLIC_PRIME = BigInteger.valueOf(65_537);
 
   //Длина выше - очень долгая генерация ключей (30+ секунд)
@@ -25,7 +24,7 @@ public class RSAKeys {
    * @param keyLength требуемая длина ключа (модуля)
    * @throws IllegalArgumentException некорректная длина ключа (модуль должен быть кратен 2, открытый и закрытый кратны 8 (байту). Кратность 8 объясняется тем, что генерация числа происходит побайтово
    */
-  public RSAKeys(final int keyLength) throws IllegalArgumentException {
+  public RSAKeys(final int keyLength, boolean defaultPublic) throws IllegalArgumentException {
     BigInteger p, q, tempModulus;
     int byteKeyLength = keyLength / 8;
     try {
@@ -57,7 +56,7 @@ public class RSAKeys {
     BigInteger totient = BasicAlgorithms.binaryLCM(p.subtract(BigInteger.ONE), q.subtract(BigInteger.ONE));
 
     BigInteger tempPublic;
-    if (!USE_DEFAULT_PUBLIC_KEY) {
+    if (!defaultPublic) {
       BigInteger e;
       try {
         int publicKeyLength = totient.bitLength() - totient.bitLength() % 8;

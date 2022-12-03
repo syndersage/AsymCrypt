@@ -24,13 +24,10 @@ public class DSA {
   }
 
   public static byte[] verify(byte[] digest, DSAKeys keys, byte[] signature) {
-    System.out.println("SIGNAT: " + Arrays.toString(signature));
-    System.out.println("DIGEST: " + Arrays.toString(digest));
     BigInteger intGroupOrder = new BigInteger(keys.groupOrder);
     BigInteger intModulus = new BigInteger(keys.modulus);
     BigInteger intGenerator = new BigInteger(keys.base);
     BigInteger intPublic = new BigInteger(keys.personalPublicKey);
-    System.out.println(intPublic);
     BigInteger encryptedGenerator = new BigInteger(Arrays.copyOf(signature, keys.groupOrder.length));
     BigInteger encryptedMessage = new BigInteger(Arrays.copyOfRange(signature, keys.groupOrder.length, signature.length));
     BigInteger inverseEncryptedMessage = encryptedMessage.modInverse(intGroupOrder);
@@ -38,7 +35,6 @@ public class DSA {
     BigInteger power1 = intDigest.multiply(inverseEncryptedMessage).mod(intGroupOrder);
     BigInteger power2 = encryptedGenerator.multiply(inverseEncryptedMessage).mod(intGroupOrder);
     BigInteger result = (intGenerator.modPow(power1, intModulus).multiply(intPublic.modPow(power2, intModulus))).mod(intModulus).mod(intGroupOrder);
-    System.out.println(Arrays.toString(Numbers.i2osp(result, intGroupOrder.bitLength() / 8)));
     return Numbers.i2osp(result, keys.groupOrder.length);
   }
 }

@@ -40,6 +40,8 @@
                     <item value="MD5"/>
                     <item value="SHA1"/>
                     <item value="DSA"/>
+                    <item value="RSA sign"/>
+                    <item value="ElGamal sign"/>
                   </model>
                   <selectedIndex value="-1"/>
                   <selectionMode value="0"/>
@@ -1304,6 +1306,269 @@
                               </grid>
                             </children>
                           </grid>
+                          <grid id="8d622" binding="rsaSignPanel" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <card name="RSA sign"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="f8f5b" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Key length (bits)"/>
+                                </properties>
+                              </component>
+                              <component id="b6280" class="javax.swing.JTextField" binding="rsaSignKeyLengthField">
+                                <constraints>
+                                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="25bb3" class="javax.swing.JButton" binding="rsaSignGenerateKeyPairButton">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Generate key pair"/>
+                                </properties>
+                              </component>
+                              <component id="136b2" class="javax.swing.JRadioButton" binding="rsaSignGeneratePublicRadioButton">
+                                <constraints>
+                                  <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Random public"/>
+                                </properties>
+                              </component>
+                              <component id="18a3c" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Modulus"/>
+                                </properties>
+                              </component>
+                              <component id="8c25d" class="javax.swing.JLabel" binding="rsaSignPublicPrivateKeyLabel">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Private key"/>
+                                </properties>
+                              </component>
+                              <component id="47331" class="javax.swing.JTextField" binding="rsaSignModulusField">
+                                <constraints>
+                                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <grid id="55797" binding="rsaSignEncryptDecryptPanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                                <constraints>
+                                  <grid row="2" column="1" row-span="2" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <component id="a32b6" class="javax.swing.JTextField" binding="rsaSignPrivateKeyField">
+                                    <constraints>
+                                      <card name="Encrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                  </component>
+                                  <component id="ca4bb" class="javax.swing.JTextField" binding="rsaSignPublicKeyField">
+                                    <constraints>
+                                      <card name="Decrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                  </component>
+                                </children>
+                              </grid>
+                              <component id="a2269" class="javax.swing.JRadioButton" binding="rsaSignDefaultPublicRadioButton">
+                                <constraints>
+                                  <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <selected value="true"/>
+                                  <text value="Default public"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="97801" binding="elGamalSignPanel" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <card name="ElGamal sign"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="6581b" class="javax.swing.JButton" binding="elGamalSignGenerateSharedButton">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Generate shared data"/>
+                                </properties>
+                              </component>
+                              <component id="b0fff" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Select cyclic group params (bits)"/>
+                                </properties>
+                              </component>
+                              <component id="13f6c" class="javax.swing.JTextField" binding="elGamalSignKeyLengthField">
+                                <constraints>
+                                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="22726" class="javax.swing.JTextField" binding="elGamalSignModulusField">
+                                <constraints>
+                                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="26146" class="javax.swing.JTextField" binding="elGamalSignBaseField">
+                                <constraints>
+                                  <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="a306e" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Modulus"/>
+                                </properties>
+                              </component>
+                              <component id="ed5fb" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Base/Generator"/>
+                                </properties>
+                              </component>
+                              <grid id="b505e" binding="elGamalSignEncryptDecryptPanel" layout-manager="CardLayout" hgap="0" vgap="0">
+                                <constraints>
+                                  <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <grid id="2a31" binding="elGamalSignEncryptPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="0"/>
+                                    <constraints>
+                                      <card name="Encrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="ff202" class="javax.swing.JLabel">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Private key"/>
+                                        </properties>
+                                      </component>
+                                      <component id="92347" class="javax.swing.JTextField" binding="elGamalSignPrivateKeyField">
+                                        <constraints>
+                                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                  <grid id="67fa" binding="elGamalSignDecryptPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="0"/>
+                                    <constraints>
+                                      <card name="Decrypt"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="7cd14" class="javax.swing.JLabel">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Public key"/>
+                                        </properties>
+                                      </component>
+                                      <component id="65c31" class="javax.swing.JTextField" binding="elGamalSignPublicKeyField">
+                                        <constraints>
+                                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                      <component id="c8c7b" class="javax.swing.JLabel">
+                                        <constraints>
+                                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Signed digest"/>
+                                        </properties>
+                                      </component>
+                                      <component id="649b0" class="javax.swing.JTextField" binding="elGamalSignResultField">
+                                        <constraints>
+                                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                      <component id="4b960" class="javax.swing.JLabel">
+                                        <constraints>
+                                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text value="Required verification output"/>
+                                        </properties>
+                                      </component>
+                                      <component id="e2f83" class="javax.swing.JTextField" binding="elGamalSignRequiredOutputField">
+                                        <constraints>
+                                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                            <preferred-size width="150" height="-1"/>
+                                          </grid>
+                                        </constraints>
+                                        <properties/>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                              <component id="afdfe" class="javax.swing.JButton" binding="elGamalSignGenerateKeyPairButton">
+                                <constraints>
+                                  <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Generate key pair"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
                         </children>
                       </grid>
                     </children>
@@ -1350,6 +1615,10 @@
       <member id="21e24"/>
       <member id="8830b"/>
       <member id="5cf8"/>
+    </group>
+    <group name="buttonGroup5">
+      <member id="a2269"/>
+      <member id="136b2"/>
     </group>
   </buttonGroups>
 </form>
