@@ -29,9 +29,7 @@ public class ElGamalSignature {
 
   public static byte[] verify(byte[] digest, ElGamalKeys keys, byte[] signature) {
     BigInteger intModulus = new BigInteger(keys.modulus);
-    BigInteger intGenerator = new BigInteger(keys.base);
     BigInteger intPublic = new BigInteger(keys.personalPublicKey);
-    BigInteger intDigest = new BigInteger(digest);
     BigInteger encryptedGenerator = new BigInteger(Arrays.copyOf(signature, keys.modulus.length));
     BigInteger encryptedMessage = new BigInteger(Arrays.copyOfRange(signature, keys.modulus.length, signature.length));
 
