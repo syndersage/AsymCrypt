@@ -1,15 +1,17 @@
 package cryptography.asymmetric.rsa;
 
-import cryptography.asymmetric.gui.UserSelections;
 import cryptography.asymmetric.Numbers;
+import cryptography.asymmetric.gui.UserSelections;
 import java.security.MessageDigest;
 
 public class MGF1 {
 
   /**
    * Mask generation function в соответствии с PKCS#1 (MGF1) для создания маски в паддинге OAEP
-   * <p>MGF позволяет принимать данные одной длины, а возвращать данные другой (произвольной) длины, указываемой в параметре функции</p>
-   * @param seed увеличение случайности функции
+   * <p>MGF позволяет принимать данные одной длины, а возвращать данные другой (произвольной) длины,
+   * указываемой в параметре функции</p>
+   *
+   * @param seed       увеличение случайности функции
    * @param maskLength выходная длина маски (в байтах)
    * @return маска ({@code byte[]} набор данных) указанной длины
    * @throws IllegalArgumentException некорректная длина маски
@@ -29,7 +31,7 @@ public class MGF1 {
     //Одна итерация позволяет создать маску длины хэша
     for (long i = 0; i <= Math.ceil((double) maskLength / digest.getDigestLength()) - 1; i++) {
       //Добавление для вычисления хэша счетчика в 4-байтовом формате
-      digest.update(new byte[] {(byte) (i >>> 24), (byte) (i >>> 16), (byte) (i >>> 8), (byte) i});
+      digest.update(new byte[]{(byte) (i >>> 24), (byte) (i >>> 16), (byte) (i >>> 8), (byte) i});
       //Добавление seed для вычисления хэша
       digest.update(seed);
       byte[] hash = digest.digest();

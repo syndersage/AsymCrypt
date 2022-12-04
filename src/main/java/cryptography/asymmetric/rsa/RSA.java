@@ -1,14 +1,15 @@
 package cryptography.asymmetric.rsa;
 
 import cryptography.asymmetric.Cipher;
-import cryptography.asymmetric.gui.UserSelections;
 import cryptography.asymmetric.Numbers;
+import cryptography.asymmetric.gui.UserSelections;
 import java.math.BigInteger;
 
 public class RSA implements Cipher {
 
 
-  public static byte[] encrypt(byte[] data, RSAKeys keys, OAEP paddingParams) throws NullPointerException, IllegalArgumentException {
+  public static byte[] encrypt(byte[] data, RSAKeys keys, OAEP paddingParams)
+      throws NullPointerException, IllegalArgumentException {
     if (keys.publicKey == null | keys.modulus == null) {
       throw new NullPointerException("Key pair is not specified");
     }
@@ -23,7 +24,9 @@ public class RSA implements Cipher {
       messageSize = byteKeyLength - 2 * UserSelections.digest.getDigestLength() - 2;
       //Паддинг занимает (2 * длина_хэша + 2) места от блока, таким образом размер исходных блоков проверяется что он больше данного значения
       if (messageSize <= 0) {
-        throw new IllegalArgumentException("Key length for selected padding+hash too small: padding gets " + ((UserSelections.digest.getDigestLength() * 8 * 2) + 2) + " bits");
+        throw new IllegalArgumentException(
+            "Key length for selected padding+hash too small: padding gets " + (
+                (UserSelections.digest.getDigestLength() * 8 * 2) + 2) + " bits");
       }
     } else {
       throw new NullPointerException("Invalid padding name");
@@ -43,14 +46,16 @@ public class RSA implements Cipher {
         //Производится шифрования и результат обратно преобразуется в массив байт
         encryptedData[i] = Numbers.i2osp(paddedChunk.modPow(publicKey, modulus), byteKeyLength);
       } else if (paddingParams.padding.equals("None")) {
-        encryptedData[i] = Numbers.i2osp(new BigInteger(1, splittedData[i]).modPow(publicKey, modulus), byteKeyLength);
+        encryptedData[i] = Numbers.i2osp(
+            new BigInteger(1, splittedData[i]).modPow(publicKey, modulus), byteKeyLength);
       }
     }
     //Блоки объединяются в один
     return Numbers.convert2Dto1D(encryptedData);
   }
 
-  public static byte[] decrypt(byte[] data, RSAKeys keys, OAEP paddingParams) throws NullPointerException {
+  public static byte[] decrypt(byte[] data, RSAKeys keys, OAEP paddingParams)
+      throws NullPointerException {
     if (keys.privateKey == null | keys.modulus == null) {
       throw new NullPointerException("Key pair is not specified");
     }
@@ -68,13 +73,16 @@ public class RSA implements Cipher {
       UserSelections.progress.setValue(i);
       if (paddingParams.padding.equals("PKCS#1-OAEP")) {
         if (byteKeyLength - 2 * UserSelections.digest.getDigestLength() - 2 <= 0) {
-          throw new IllegalArgumentException("Key length for selected padding+hash too small: padding gets " + ((UserSelections.digest.getDigestLength() * 8 * 2) + 2) + " bits");
+          throw new IllegalArgumentException(
+              "Key length for selected padding+hash too small: padding gets " + (
+                  (UserSelections.digest.getDigestLength() * 8 * 2) + 2) + " bits");
         }
         paddedChunk = Numbers.os2ip(splittedData[i]);
         decryptedData[i] = Numbers.i2osp(paddedChunk.modPow(privateKey, modulus), byteKeyLength);
         decryptedData[i] = OAEP.unwrap(decryptedData[i], paddingParams);
       } else if (paddingParams.padding.equals("None")) {
-        decryptedData[i] = Numbers.i2osp(new BigInteger(1, splittedData[i]).modPow(privateKey, modulus), byteKeyLength);
+        decryptedData[i] = Numbers.i2osp(
+            new BigInteger(1, splittedData[i]).modPow(privateKey, modulus), byteKeyLength);
         //Так как шифруемый блок размером (длина ключа в байтах - 1), то первый байт после операции сверху всегда будет ноль, а общий размер равен длине ключа в байтах
         //Это вызвано проблемой деления на блоки: если блоки будут длины ключа, то их целочисленное выражение может быть больше модуля, поэтому берется на 1 байт меньше
         byte[] removeFirstByte = new byte[byteKeyLength - 1];

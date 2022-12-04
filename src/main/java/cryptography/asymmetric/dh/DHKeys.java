@@ -5,17 +5,17 @@ import java.math.BigInteger;
 
 public class DHKeys {
 
+  public static final BigInteger MIN_BASE = new BigInteger("2");
+  public static final BigInteger MIN_MODULUS = new BigInteger("16");
   public byte[] base;
   public byte[] modulus;
   public byte[] privateKey;
 
-  public static final BigInteger MIN_BASE = new BigInteger("2");
-  public static final BigInteger MIN_MODULUS = new BigInteger("16");
-
 
   public DHKeys(int keyLength) throws IllegalArgumentException {
     if (keyLength < 4 | keyLength > 3072) {
-      throw new IllegalArgumentException("Too " + (keyLength < 4 ? "small" : "big") + " key length");
+      throw new IllegalArgumentException(
+          "Too " + (keyLength < 4 ? "small" : "big") + " key length");
     }
     BigInteger tempBase, tempModulus, subGroup;
     do {
@@ -40,8 +40,6 @@ public class DHKeys {
     if (modulus.compareTo(new BigInteger("15")) <= 0) {
       throw new IllegalArgumentException(" Modulus cannot be less than 16");
     }
-    System.out.println("BASE: " + base);
-    System.out.println("MODU: " + modulus);
     if (base.compareTo(modulus) >= 0) {
       throw new IllegalArgumentException("Base size have to be smaller than modulus");
     }
@@ -62,6 +60,7 @@ public class DHKeys {
   public void setPrivateKey() {
     do {
       privateKey = new BigInteger(modulus.length * 8, Numbers.random).toByteArray();
-    } while (new BigInteger(privateKey).compareTo(new BigInteger(modulus)) >= 0 | new BigInteger(privateKey).compareTo(BigInteger.ONE) <= 0);
+    } while (new BigInteger(privateKey).compareTo(new BigInteger(modulus)) >= 0
+        | new BigInteger(privateKey).compareTo(BigInteger.ONE) <= 0);
   }
 }

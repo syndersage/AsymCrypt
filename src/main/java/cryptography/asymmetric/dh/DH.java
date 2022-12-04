@@ -3,6 +3,7 @@ package cryptography.asymmetric.dh;
 import java.math.BigInteger;
 
 public class DH {
+
   public static byte[] calculate(DHKeys keys) {
     byte[] base = keys.base;
     byte[] modulus = keys.modulus;

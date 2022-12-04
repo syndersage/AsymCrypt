@@ -21,18 +21,23 @@ public class RSAKeys {
 
   /**
    * Генерируется пара {@code byte} ключей RSA (открытый, закрытый и модуль)
+   *
    * @param keyLength требуемая длина ключа (модуля)
-   * @throws IllegalArgumentException некорректная длина ключа (модуль должен быть кратен 2, открытый и закрытый кратны 8 (байту). Кратность 8 объясняется тем, что генерация числа происходит побайтово
+   * @throws IllegalArgumentException некорректная длина ключа (модуль должен быть кратен 2,
+   *                                  открытый и закрытый кратны 8 (байту). Кратность 8 объясняется
+   *                                  тем, что генерация числа происходит побайтово
    */
   public RSAKeys(final int keyLength, boolean defaultPublic) throws IllegalArgumentException {
     BigInteger p, q, tempModulus;
     int byteKeyLength = keyLength / 8;
     try {
       if (keyLength > MAX_KEY_LENGTH) {
-        throw new IllegalArgumentException("Key length too big: max auto generation length is " + MAX_KEY_LENGTH + " bits");
+        throw new IllegalArgumentException(
+            "Key length too big: max auto generation length is " + MAX_KEY_LENGTH + " bits");
       }
       if (keyLength < MIN_KEY_LENGTH) {
-        throw new IllegalArgumentException("Key length too small: min auto generation length is " + MIN_KEY_LENGTH + " bits");
+        throw new IllegalArgumentException(
+            "Key length too small: min auto generation length is " + MIN_KEY_LENGTH + " bits");
       }
       if (keyLength % 2 != 0) {
         throw new IllegalArgumentException("Key length have to be even");
@@ -47,13 +52,15 @@ public class RSAKeys {
           q = Numbers.genNumber(keyLength / 2);
         }
         tempModulus = p.multiply(q);
-      } while (tempModulus.toByteArray().length != (byteKeyLength) | tempModulus.toByteArray()[0] == 0);
+      } while (tempModulus.toByteArray().length != (byteKeyLength)
+          | tempModulus.toByteArray()[0] == 0);
       modulus = Numbers.i2osp(tempModulus, byteKeyLength);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Invalid key length", e);
     }
 
-    BigInteger totient = BasicAlgorithms.binaryLCM(p.subtract(BigInteger.ONE), q.subtract(BigInteger.ONE));
+    BigInteger totient = BasicAlgorithms.binaryLCM(p.subtract(BigInteger.ONE),
+        q.subtract(BigInteger.ONE));
 
     BigInteger tempPublic;
     if (!defaultPublic) {
@@ -76,7 +83,8 @@ public class RSAKeys {
 
   }
 
-  public RSAKeys(BigInteger publicKey, BigInteger privateKey, BigInteger modulus) throws NullPointerException {
+  public RSAKeys(BigInteger publicKey, BigInteger privateKey, BigInteger modulus)
+      throws NullPointerException {
     if (modulus == null) {
       throw new NullPointerException("Modulus have to be specified");
     }

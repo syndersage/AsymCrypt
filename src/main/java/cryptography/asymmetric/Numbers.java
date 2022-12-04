@@ -8,8 +8,8 @@ import org.bouncycastle.math.Primes;
 
 public class Numbers {
 
-  public static char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-      'a', 'b', 'c', 'd', 'e', 'f' };
+  public static char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+      'a', 'b', 'c', 'd', 'e', 'f'};
 
   public static SecureRandom random = new SecureRandom();
 
@@ -18,6 +18,7 @@ public class Numbers {
 
   /**
    * Генерация криптографически безопасного случайного числа с длиной, кратной длине байта
+   *
    * @param bits длина генерируемого случайного числа в битах
    * @return случайное число
    * @throws IllegalArgumentException длина в битах не кратна байту (8)
@@ -34,10 +35,14 @@ public class Numbers {
   }
 
   /**
-   * Проверка числа на простоту используя решето из первых простых чисел (вплоть до числа 211) и 64/128 раундов Миллера-Рабина
-   * @see <a href="https://javadox.com/org.bouncycastle/bcprov-jdk15on/1.53/org/bouncycastle/math/Primes.html">Bouncy castle prime test docs</a>
+   * Проверка числа на простоту используя решето из первых простых чисел (вплоть до числа 211) и
+   * 64/128 раундов Миллера-Рабина
+   *
    * @param number число для проверки на простоту
    * @return false - число составное, true - вероятно простое
+   * @see <a
+   * href="https://javadox.com/org.bouncycastle/bcprov-jdk15on/1.53/org/bouncycastle/math/Primes.html">Bouncy
+   * castle prime test docs</a>
    */
   public static boolean isPrime(BigInteger number) {
     if (Primes.hasAnySmallFactors(number)) {
@@ -81,10 +86,12 @@ public class Numbers {
     int tailSize = array.length % chunkSize;
     if (tailSize != 0) {
       splittedArray[splittedArray.length - 1] = new byte[tailSize];
-      System.arraycopy(array, array.length - tailSize, splittedArray[splittedArray.length - 1], 0, tailSize);
+      System.arraycopy(array, array.length - tailSize, splittedArray[splittedArray.length - 1], 0,
+          tailSize);
     } else {
       splittedArray[splittedArray.length - 1] = new byte[chunkSize];
-      System.arraycopy(array, array.length - chunkSize, splittedArray[splittedArray.length - 1], 0, chunkSize);
+      System.arraycopy(array, array.length - chunkSize, splittedArray[splittedArray.length - 1], 0,
+          chunkSize);
     }
 
     //Заполнение подмассивов
@@ -118,15 +125,28 @@ public class Numbers {
 
 
   /**
-   * Создается группа вычетов. Применяется в таких алгоритмах как DSA для создания простого числа с большим делителем функции эйлера от модуля
-   * <p>Группа может иметь как порядок равный функции Эйлера, т.е. для простого числа p это p-1, так и иной порядок, равный функции эйлера (p-1) делённой на один из её делителей, например (p-1)/2</p>
-   * @see <a href="https://crypto.stackexchange.com/questions/25980/about-primitive-roots-mod-n-in-diffie-hellman">Почему у p-1 (функции Эйлера простого числа) должен быть большой простой множитель</a>
-   * @see <a href="https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D1%8C_(%D1%82%D0%B5%D0%BE%D1%80%D0%B8%D1%8F_%D1%87%D0%B8%D1%81%D0%B5%D0%BB)">Первообразный корень (генератор) и то как он проверяется</a>
+   * Создается группа вычетов. Применяется в таких алгоритмах как DSA для создания простого числа с
+   * большим делителем функции эйлера от модуля
+   * <p>Группа может иметь как порядок равный функции Эйлера, т.е. для простого числа p это p-1, так
+   * и иной порядок, равный функции эйлера (p-1) делённой на один из её делителей, например
+   * (p-1)/2</p>
+   *
    * @param modulusSize Длина модуля в битах
-   * @param groupSize Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
-   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
+   * @param groupSize   Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит
+   *                    (сгенерированных) порядка цикличной группы, обозначающий общее количество
+   *                    возможных элементов, которые можно получить путем
+   *                    {@code g^(1,2,3,...,p-1) mod p}
+   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному
+   * модулю получить необходимый порядок группы order
+   * @see <a
+   * href="https://crypto.stackexchange.com/questions/25980/about-primitive-roots-mod-n-in-diffie-hellman">Почему
+   * у p-1 (функции Эйлера простого числа) должен быть большой простой множитель</a>
+   * @see <a
+   * href="https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D1%8C_(%D1%82%D0%B5%D0%BE%D1%80%D0%B8%D1%8F_%D1%87%D0%B8%D1%81%D0%B5%D0%BB)">Первообразный
+   * корень (генератор) и то как он проверяется</a>
    */
-  public static Map<String, BigInteger> generateCyclicGroup(int modulusSize, int groupSize) throws IllegalArgumentException {
+  public static Map<String, BigInteger> generateCyclicGroup(int modulusSize, int groupSize)
+      throws IllegalArgumentException {
     if (modulusSize > 6144 | modulusSize < 8) {
       throw new IllegalArgumentException("Modulus size must be between 8 and 6144 bits");
     }
@@ -156,37 +176,51 @@ public class Numbers {
   }
 
   /**
-   * Создается группа вычетов. Применяется в таких алгоритмах как DH, ElGamal и др. для создания большого числа с большим делителем функции Эйлера от модуля, при этом размер модуля не является фиксированной длины
-   * @param groupSize Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит (сгенерированных) порядка цикличной группы, обозначающий общее количество возможных элементов, которые можно получить путем {@code g^(1,2,3,...,p-1) mod p}
-   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному модулю получить необходимый порядок группы order
+   * Создается группа вычетов. Применяется в таких алгоритмах как DH, ElGamal и др. для создания
+   * большого числа с большим делителем функции Эйлера от модуля, при этом размер модуля не является
+   * фиксированной длины
+   *
+   * @param groupSize Длина порядка (группы) модуля {@code modulusSize}, т.е. количество бит
+   *                  (сгенерированных) порядка цикличной группы, обозначающий общее количество
+   *                  возможных элементов, которые можно получить путем
+   *                  {@code g^(1,2,3,...,p-1) mod p}
+   * @return "Modulus" - Модуль группы вычетов, "Generator" - основание, позволяющее по указанному
+   * модулю получить необходимый порядок группы order
    */
-  public static Map<String, BigInteger> generateCyclicGroup(int groupSize) throws IllegalArgumentException {
+  public static Map<String, BigInteger> generateCyclicGroup(int groupSize)
+      throws IllegalArgumentException {
     return generateCyclicGroup(randomValueSize + groupSize, groupSize);
   }
 
   /**
    * Преобразование в {@code BigInteger} неотрицательное целочисленное число массива байт
-   * @see #i2osp(BigInteger, int)
+   *
    * @param data массив байт
    * @return {@code BigInteger} неотрицательное целочисленное число
+   * @see #i2osp(BigInteger, int)
    */
-  public static BigInteger os2ip(byte[] data){
+  public static BigInteger os2ip(byte[] data) {
     return new BigInteger(1, data);
   }
 
   /**
-   * Преобразует {@code BigInteger} целочисленное число в массив байт с фиксированной длиной, 0х00 байты ставятся в начало (big endian)
+   * Преобразует {@code BigInteger} целочисленное число в массив байт с фиксированной длиной, 0х00
+   * байты ставятся в начало (big endian)
    * <p>RFC8017 описывает реализацию и то, для чего применяется (в OAEP)</p>
-   * @see <a href="https://stackoverflow.com/questions/8515691/getting-1-byte-extra-in-the-modulus-rsa-key-and-sometimes-for-exponents-also">Пример применения</a>
-   * @param data число, которое будет преобразовываться в байтовое представление
+   *
+   * @param data   число, которое будет преобразовываться в байтовое представление
    * @param length длина выходного массива байт
    * @return {@code byte[]} массив, представляющий собой целочисленное число
+   * @see <a
+   * href="https://stackoverflow.com/questions/8515691/getting-1-byte-extra-in-the-modulus-rsa-key-and-sometimes-for-exponents-also">Пример
+   * применения</a>
    */
-  public static byte[] i2osp(BigInteger data, int length){
+  public static byte[] i2osp(BigInteger data, int length) {
     byte[] out = new byte[length];
     byte[] dataArray = data.toByteArray();
     int signByte = dataArray[0] == 0 ? 1 : 0;
-    System.arraycopy(dataArray, signByte, out, length - dataArray.length + signByte, dataArray.length - signByte);
+    System.arraycopy(dataArray, signByte, out, length - dataArray.length + signByte,
+        dataArray.length - signByte);
     return out;
   }
 

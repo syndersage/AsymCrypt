@@ -13,6 +13,29 @@ public class SHA {
   int h3 = 0x10325476;
   int h4 = 0xC3D2E1F0;
 
+  public static int round(int index, int b, int c, int d) {
+    //Операции с элементами буферов, зависящие от номера перебираемого "слова"
+    int result = 0;
+    switch (index / 20) {
+      case 0 -> result = (b & c) | ((~b) & d);
+      case 1, 3 -> result = b ^ c ^ d;
+      case 2 -> result = (b & c) | (b & d) | (c & d);
+    }
+    return result;
+  }
+
+  public static int getK(int index) {
+    //Константы, зависящие от номера перебираемого "слова" в алгоритме (0-19 - первое, 20-39 - второе, 40-59 - третье, 60-79 - четвертое)
+    int k = 0;
+    switch (index / 20) {
+      case 0 -> k = 0x5A827999;
+      case 1 -> k = 0x6ED9EBA1;
+      case 2 -> k = 0x8F1BBCDC;
+      case 3 -> k = 0xCA62C1D6;
+    }
+    return k;
+  }
+
   public byte[] calculate(byte[] data) {
     data = Numbers.concatArrays(data, paddingBits(data.length), paddingLength(data.length));
     //Вычисление промежуточного дайджеста для каждых 512 бит (64 байт) входных данных
@@ -27,12 +50,11 @@ public class SHA {
     }
     //Вычисление результата дайджеста путем соединения 5 буферов
     byte[] digest = new byte[20];
-    System.arraycopy(ByteBuffer.allocate(4).putInt(h0).array(), 0, digest,  0, 4);
-    System.arraycopy(ByteBuffer.allocate(4).putInt(h1).array(), 0, digest,  4, 4);
-    System.arraycopy(ByteBuffer.allocate(4).putInt(h2).array(), 0, digest,  8, 4);
+    System.arraycopy(ByteBuffer.allocate(4).putInt(h0).array(), 0, digest, 0, 4);
+    System.arraycopy(ByteBuffer.allocate(4).putInt(h1).array(), 0, digest, 4, 4);
+    System.arraycopy(ByteBuffer.allocate(4).putInt(h2).array(), 0, digest, 8, 4);
     System.arraycopy(ByteBuffer.allocate(4).putInt(h3).array(), 0, digest, 12, 4);
     System.arraycopy(ByteBuffer.allocate(4).putInt(h4).array(), 0, digest, 16, 4);
-    System.out.println(Numbers.bytesToHex(digest));
     return digest;
   }
 
@@ -67,7 +89,9 @@ public class SHA {
     int[] extendedWords = new int[80];
     System.arraycopy(words, 0, extendedWords, 0, words.length);
     for (int i = 16; i < extendedWords.length; i++) {
-      extendedWords[i] = Integer.rotateLeft(extendedWords[i - 3] ^ extendedWords[i - 8] ^ extendedWords[i - 14] ^ extendedWords[i - 16], 1);
+      extendedWords[i] = Integer.rotateLeft(
+          extendedWords[i - 3] ^ extendedWords[i - 8] ^ extendedWords[i - 14] ^ extendedWords[i
+              - 16], 1);
     }
 
     //Для проведения операций с блоком копируются текущие величины буферов, после чего с ними проводятся операции
@@ -93,31 +117,6 @@ public class SHA {
     h3 += d;
     h4 += e;
   }
-
-  public static int round(int index, int b, int c, int d) {
-    //Операции с элементами буферов, зависящие от номера перебираемого "слова"
-    int result = 0;
-    switch (index / 20) {
-      case 0 -> result = (b & c) | ((~b) & d);
-      case 1, 3 -> result = b ^ c ^ d;
-      case 2 -> result = (b & c) | (b & d) | (c & d);
-    }
-    return result;
-  }
-
-  public static int getK(int index) {
-    //Константы, зависящие от номера перебираемого "слова" в алгоритме (0-19 - первое, 20-39 - второе, 40-59 - третье, 60-79 - четвертое)
-    int k = 0;
-    switch (index / 20) {
-      case 0 -> k = 0x5A827999;
-      case 1 -> k = 0x6ED9EBA1;
-      case 2 -> k = 0x8F1BBCDC;
-      case 3 -> k = 0xCA62C1D6;
-    }
-    return k;
-  }
-
-
 
   public byte[] paddingLength(int bytesDataLength) {
     //Вычисляется длина сообщения в виде 8-байтового значения

@@ -30,21 +30,21 @@ public class ShamirKeys {
     BigInteger tempFirst, tempPublic = new BigInteger(publicKey);
     do {
       tempFirst = new BigInteger(tempPublic.bitLength(), Numbers.random);
-    } while (tempFirst.compareTo(tempPublic.subtract(BigInteger.ONE)) >= 0 || tempFirst.gcd(tempPublic.subtract(BigInteger.ONE)).compareTo(BigInteger.ONE) != 0);
+    } while (tempFirst.compareTo(tempPublic.subtract(BigInteger.ONE)) >= 0
+        || tempFirst.gcd(tempPublic.subtract(BigInteger.ONE)).compareTo(BigInteger.ONE) != 0);
     secondPrivateKey = tempFirst.modInverse(tempPublic.subtract(BigInteger.ONE)).toByteArray();
     firstPrivateKey = tempFirst.toByteArray();
   }
 
-  public void setPrivateKeys(BigInteger firstPrivateKey, BigInteger secondPrivateKey) throws IllegalArgumentException {
+  public void setPrivateKeys(BigInteger firstPrivateKey, BigInteger secondPrivateKey)
+      throws IllegalArgumentException {
     BigInteger tempPublic = new BigInteger(publicKey);
     if (firstPrivateKey.compareTo(tempPublic) >= 0 | secondPrivateKey.compareTo(tempPublic) >= 0) {
       throw new IllegalArgumentException("Private keys cannot be bigger than public key");
     }
     if (firstPrivateKey.gcd(tempPublic.subtract(BigInteger.ONE)).compareTo(BigInteger.ONE) != 0) {
-      System.out.println(tempPublic);
-      System.out.println(firstPrivateKey);
-      System.out.println(secondPrivateKey);
-      throw new IllegalArgumentException("First private key must have modular inverse value (i.e. gcd(public, private№1) == 1)");
+      throw new IllegalArgumentException(
+          "First private key must have modular inverse value (i.e. gcd(public, private№1) == 1)");
     }
     this.firstPrivateKey = firstPrivateKey.toByteArray();
     this.secondPrivateKey = secondPrivateKey.toByteArray();
