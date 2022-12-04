@@ -27,7 +27,7 @@ public class ElGamalSignature {
     return Numbers.concatenateArrays(Numbers.i2osp(encryptedGenerator, keys.modulus.length), Numbers.i2osp(encryptedMessage, keys.modulus.length));
   }
 
-  public static byte[] verify(byte[] digest, ElGamalKeys keys, byte[] signature) {
+  public static byte[] verify(ElGamalKeys keys, byte[] signature) {
     BigInteger intModulus = new BigInteger(keys.modulus);
     BigInteger intPublic = new BigInteger(keys.personalPublicKey);
     BigInteger encryptedGenerator = new BigInteger(Arrays.copyOf(signature, keys.modulus.length));
