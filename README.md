@@ -1,9 +1,9 @@
 # AsymCrypt
 
 ## What is AsymCrypt?
-**AsymCrypt** is an java GUI app which implements asymmetric cryptography algorithms.
+**AsymCrypt** is a java GUI app which implements asymmetric cryptography algorithms.
 
-## Algorithms
+### Algorithms
 *   **RSA** encryption
 *   **DH** key exchange
 *   **Shamir** three pass
@@ -14,13 +14,14 @@
 *   **RSA** signature
 *   **ElGamal** signature
 
-# Usage
+## Usage
 ```sh
 java -jar AsymCrypt.jar
 ```
+For more usage information go to [General and algorithms GUI docs](docs)
 
-## Restrictions
-*   **java** version: 17+
+### Requirements/Restrictions
+*   **Java**: 17+
 
-## Dependencies
-*   **Bouncycastle** 1.70+
+### Dependencies
+*   **Bouncycastle**: 1.70+
