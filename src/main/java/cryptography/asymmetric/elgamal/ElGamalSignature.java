@@ -35,8 +35,7 @@ public class ElGamalSignature {
     BigInteger encryptedGenerator = new BigInteger(Arrays.copyOf(signature, keys.modulus.length));
     BigInteger encryptedMessage = new BigInteger(Arrays.copyOfRange(signature, keys.modulus.length, signature.length));
 
-    BigInteger required = intGenerator.modPow(intDigest, intModulus);
-    BigInteger received = intPublic.modPow(encryptedGenerator, intModulus).multiply(encryptedGenerator.modPow(encryptedMessage, intModulus)).mod(intModulus);
-    return Numbers.concatenateArrays(Numbers.i2osp(required, keys.modulus.length), Numbers.i2osp(received, keys.modulus.length));
+    BigInteger result = intPublic.modPow(encryptedGenerator, intModulus).multiply(encryptedGenerator.modPow(encryptedMessage, intModulus)).mod(intModulus);
+    return Numbers.i2osp(result, keys.modulus.length);
   }
 }
